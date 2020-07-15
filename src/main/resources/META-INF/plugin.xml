@@ -1,0 +1,26 @@
+<idea-plugin>
+    <id>com.huage2580.leeks</id>
+    <name>小韭菜</name>
+    <vendor email="huage2580@gmail.com" url="http://github.com/huge2580">huage2580</vendor>
+
+    <description><![CDATA[
+    韭菜专用摸鱼插件!
+    韭菜专用摸鱼插件!
+    韭菜专用摸鱼插件!
+        good luck!
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <toolWindow icon="/icon.png" anchor="left" id="leeks" factoryClass="FundWindow"/>
+        <applicationConfigurable id="leeks_settings" instance="SettingsWindow"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
