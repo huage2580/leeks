@@ -110,7 +110,7 @@ public abstract class StockRefreshHandler {
             if (fundBean.getChangePercent()!=null){
                 changePercentStr= fundBean.getChangePercent().startsWith("-")?fundBean.getChangePercent():"+"+fundBean.getChangePercent();
             }
-            temp[i] = new Object[]{fundBean.getName(), fundBean.getNow(), changeStr,changePercentStr+"%", timeStr};
+            temp[i] = new Object[]{fundBean.getName()+" ("+fundBean.getCode()+")", fundBean.getNow(), changeStr,changePercentStr+"%", timeStr};
         }
         return temp;
     }

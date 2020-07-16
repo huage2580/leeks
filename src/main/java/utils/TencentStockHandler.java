@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public class TencentStockHandler extends StockRefreshHandler {
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm ss");
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm ss");
 
     private List<String> codes = new ArrayList<>();
 
@@ -59,15 +59,15 @@ public class TencentStockHandler extends StockRefreshHandler {
     }
 
     private void stepAction() {
-        Date now = new Date();
-        if ( now.getHours() < 9 || now.getHours() > 16){//九点到下午4点才更新数据
-            try {
-                Thread.sleep(60 * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return;
-        }
+//        Date now = new Date();
+//        if ( now.getHours() < 9 || now.getHours() > 16){//九点到下午4点才更新数据
+//            try {
+//                Thread.sleep(60 * 1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            return;
+//        }
         if (codes.isEmpty()){
             return;
         }

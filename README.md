@@ -15,4 +15,5 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 ![dd](https://github.com/huage2580/leeks/blob/master/TIM%E6%88%AA%E5%9B%BE20200715180157.jpg)
 
 ## change  
-v1.1 增加了股票的tab，采用腾讯的行情接口，股票轮询间隔10s
+v1.1 增加了股票的tab，采用腾讯的行情接口，股票轮询间隔10s  
+v1.2 支持了港股和美股 示例代码：（sh000001,sh600519,sz000001,hk00700,usAAPL）代码一般可以在各网页端看得到
