@@ -5,7 +5,8 @@ idea插件，查看基金
 leeks-1.1.jar 直接在IDEA里面安装  
 
 ## 使用  
-设置里面找到Leeks选项，输入基金编码，逗号分隔，apply。  
+设置里面找到Leeks选项，输入基金编码，股票编码，逗号分隔，apply。    
+（股票编码建议用雪球看网页找，示例：sh600519,sz000001，基金编码zfb上面有，或者天天基金看  
 double shift，连按两下shift，输入leeks，找到toolWindow，打开以后默认在下方，自行调节位置  
 每次修改，添加基金，都需要点refresh按钮或者重启IDEA。  
 更新频率一分钟一次
