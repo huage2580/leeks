@@ -22,12 +22,17 @@ public class FundWindow implements ToolWindowFactory {
 
     FundRefreshHandler fundRefreshHandler;
 
+    private StockWindow stockWindow = new StockWindow();
+
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(mPanel, "Fund", false);
+
+        Content content_stock = contentFactory.createContent(stockWindow.getPanel1(), "Stock", false);
         toolWindow.getContentManager().addContent(content);
+        toolWindow.getContentManager().addContent(content_stock);
         LogUtil.setProject(project);
 //        ((ToolWindowManagerEx) ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerListener() {
 //            @Override
@@ -41,6 +46,7 @@ public class FundWindow implements ToolWindowFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 fundRefreshHandler.handle(loadFunds());
+                stockWindow.onInit();
             }
         });
 
@@ -50,6 +56,7 @@ public class FundWindow implements ToolWindowFactory {
     public void init(ToolWindow window) {
         fundRefreshHandler = new TianTianFundHandler(table1);
         fundRefreshHandler.handle(loadFunds());
+        stockWindow.onInit();
     }
 
     private List<String> loadFunds(){

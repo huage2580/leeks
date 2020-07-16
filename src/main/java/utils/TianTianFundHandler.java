@@ -20,11 +20,15 @@ public class TianTianFundHandler extends FundRefreshHandler {
         LogUtil.info("Leeks 更新基金编码数据.");
         if (worker!=null){
             worker.interrupt();
+            worker.stop();
+        }
+        if (code.isEmpty()){
+            return;
         }
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (worker!=null && !worker.isInterrupted()){
+                while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()){
                     stepAction();
                     try {
                         Thread.sleep(60 * 1000);
@@ -45,7 +49,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
     }
 
     private void stepAction(){
-        LogUtil.info("Leeks 刷新基金数据.");
+//        LogUtil.info("Leeks 刷新基金数据.");
         for (String s : codes) {
             new Thread(new Runnable() {
                 @Override

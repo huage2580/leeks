@@ -10,6 +10,7 @@ public class SettingsWindow  implements Configurable {
     private JPanel panel1;
     private JLabel label;
     private JTextField textField1;
+    private JTextField textField2;
 
     private String orgin;
 
@@ -21,18 +22,20 @@ public class SettingsWindow  implements Configurable {
     @Override
     public @Nullable JComponent createComponent() {
         String value = PropertiesComponent.getInstance().getValue("key_funds");
-        orgin = value;
+        String value_stock = PropertiesComponent.getInstance().getValue("key_stocks");
         textField1.setText(value);
+        textField2.setText(value_stock);
         return panel1;
     }
 
     @Override
     public boolean isModified() {
-        return !textField1.getText().equals(orgin);
+        return true;
     }
 
     @Override
     public void apply() throws ConfigurationException {
         PropertiesComponent.getInstance().setValue("key_funds",textField1.getText());
+        PropertiesComponent.getInstance().setValue("key_stocks",textField2.getText());
     }
 }
