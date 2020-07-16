@@ -2,7 +2,7 @@
 idea插件，查看基金
 
 ## 安装  
-leeks-1.0-SNAPSHOT.jar 直接在IDEA里面安装  
+leeks-1.1.jar 直接在IDEA里面安装  
 
 ## 使用  
 设置里面找到Leeks选项，输入基金编码，逗号分隔，apply。  
@@ -12,3 +12,6 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 
 ![da](https://github.com/huage2580/leeks/blob/master/TIM%E6%88%AA%E5%9B%BE20200715180137.jpg)
 ![dd](https://github.com/huage2580/leeks/blob/master/TIM%E6%88%AA%E5%9B%BE20200715180157.jpg)
+
+## change  
+v1.1 增加了股票的tab，采用腾讯的行情接口，股票轮询间隔10s
