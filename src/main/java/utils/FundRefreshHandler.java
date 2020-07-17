@@ -19,6 +19,9 @@ public abstract class FundRefreshHandler {
     public FundRefreshHandler(JTable table) {
         this.table = table;
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        // Fix tree row height
+        FontMetrics metrics = table.getFontMetrics(table.getFont());
+        table.setRowHeight(Math.max(table.getRowHeight(), metrics.getHeight()));
     }
 
     /**
