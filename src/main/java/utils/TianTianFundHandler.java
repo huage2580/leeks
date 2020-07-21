@@ -20,7 +20,6 @@ public class TianTianFundHandler extends FundRefreshHandler {
         LogUtil.info("Leeks 更新基金编码数据.");
         if (worker!=null){
             worker.interrupt();
-            worker.stop();
         }
         if (code.isEmpty()){
             return;

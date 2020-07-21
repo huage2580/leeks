@@ -45,6 +45,8 @@ public class FundWindow implements ToolWindowFactory {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
+                fundRefreshHandler.setColorful(colorful);
                 fundRefreshHandler.handle(loadFunds());
                 stockWindow.onInit();
             }
@@ -54,7 +56,9 @@ public class FundWindow implements ToolWindowFactory {
 
     @Override
     public void init(ToolWindow window) {
+        boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
         fundRefreshHandler = new TianTianFundHandler(table1);
+        fundRefreshHandler.setColorful(colorful);
         fundRefreshHandler.handle(loadFunds());
         stockWindow.onInit();
     }

@@ -6,9 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public abstract class StockRefreshHandler {
@@ -16,12 +14,18 @@ public abstract class StockRefreshHandler {
     private JTable table;
     private int[] sizes = new int[]{0,0,0,0,0};
 
+    private boolean colorful = true;
+
     public StockRefreshHandler(JTable table) {
         this.table = table;
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         // Fix tree row height
         FontMetrics metrics = table.getFontMetrics(table.getFont());
         table.setRowHeight(Math.max(table.getRowHeight(), metrics.getHeight()));
+    }
+
+    public void setColorful(boolean colorful) {
+        this.colorful = colorful;
     }
 
     /**
@@ -40,6 +44,11 @@ public abstract class StockRefreshHandler {
             public void run() {
                 recordTableSize();
                 String[] columnNames = {"股票名称", "当前价","涨跌", "涨跌幅", "更新时间"};
+                if (!colorful){
+                    for (int i = 0; i < columnNames.length; i++) {
+                        columnNames[i] = PinYinUtils.toPinYin(columnNames[i]);
+                    }
+                }
                 DefaultTableModel model = new DefaultTableModel(convertData(), columnNames);
                 table.setModel(model);
                 updateColors();
@@ -68,7 +77,7 @@ public abstract class StockRefreshHandler {
     }
 
     private void updateColors() {
-        table.getColumn("涨跌幅").setCellRenderer(new DefaultTableCellRenderer() {
+        table.getColumn(table.getColumnName(3)).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 double temp = 0.0;
@@ -80,9 +89,17 @@ public abstract class StockRefreshHandler {
                 }
                 Color orgin = getForeground();
                 if (temp > 0) {
-                    setForeground(JBColor.RED);
+                    if (colorful){
+                        setForeground(JBColor.RED);
+                    }else {
+                        setForeground(JBColor.DARK_GRAY);
+                    }
                 } else if (temp < 0) {
-                    setForeground(JBColor.GREEN);
+                    if (colorful){
+                        setForeground(JBColor.GREEN);
+                    }else {
+                        setForeground(JBColor.GRAY);
+                    }
                 } else if (temp == 0) {
                     setForeground(orgin);
                 }
@@ -113,7 +130,7 @@ public abstract class StockRefreshHandler {
             if (fundBean.getChangePercent()!=null){
                 changePercentStr= fundBean.getChangePercent().startsWith("-")?fundBean.getChangePercent():"+"+fundBean.getChangePercent();
             }
-            temp[i] = new Object[]{fundBean.getName()+" ("+fundBean.getCode()+")", fundBean.getNow(), changeStr,changePercentStr+"%", timeStr};
+            temp[i] = new Object[]{colorful?fundBean.getName():PinYinUtils.toPinYin(fundBean.getName())+" ("+fundBean.getCode()+")", fundBean.getNow(), changeStr,changePercentStr+"%", timeStr};
         }
         return temp;
     }

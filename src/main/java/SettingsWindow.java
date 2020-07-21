@@ -11,6 +11,7 @@ public class SettingsWindow  implements Configurable {
     private JLabel label;
     private JTextField textField1;
     private JTextField textField2;
+    private JCheckBox checkbox;
 
     private String orgin;
 
@@ -23,8 +24,10 @@ public class SettingsWindow  implements Configurable {
     public @Nullable JComponent createComponent() {
         String value = PropertiesComponent.getInstance().getValue("key_funds");
         String value_stock = PropertiesComponent.getInstance().getValue("key_stocks");
+        boolean value_color = PropertiesComponent.getInstance().getBoolean("key_colorful");
         textField1.setText(value);
         textField2.setText(value_stock);
+        checkbox.setSelected(!value_color);
         return panel1;
     }
 
@@ -37,5 +40,6 @@ public class SettingsWindow  implements Configurable {
     public void apply() throws ConfigurationException {
         PropertiesComponent.getInstance().setValue("key_funds",textField1.getText());
         PropertiesComponent.getInstance().setValue("key_stocks",textField2.getText());
+        PropertiesComponent.getInstance().setValue("key_colorful",!checkbox.isSelected());
     }
 }

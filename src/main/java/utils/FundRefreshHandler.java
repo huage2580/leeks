@@ -1,5 +1,6 @@
 package utils;
 
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.intellij.ui.JBColor;
 
 import javax.swing.*;
@@ -15,6 +16,8 @@ public abstract class FundRefreshHandler {
     private ArrayList<FundBean> data = new ArrayList<>();
     private JTable table;
     private int[] sizes = new int[]{0,0,0,0};
+    private boolean colorful = true;
+
 
     public FundRefreshHandler(JTable table) {
         this.table = table;
@@ -22,6 +25,11 @@ public abstract class FundRefreshHandler {
         // Fix tree row height
         FontMetrics metrics = table.getFontMetrics(table.getFont());
         table.setRowHeight(Math.max(table.getRowHeight(), metrics.getHeight()));
+
+    }
+
+    public void setColorful(boolean colorful) {
+        this.colorful = colorful;
     }
 
     /**
@@ -40,6 +48,11 @@ public abstract class FundRefreshHandler {
             public void run() {
                 recordTableSize();
                 String[] columnNames = {"基金名称", "估算净值", "估算涨跌", "更新时间"};
+                if (!colorful){
+                    for (int i = 0; i < columnNames.length; i++) {
+                        columnNames[i] = PinYinUtils.toPinYin(columnNames[i]);
+                    }
+                }
                 DefaultTableModel model = new DefaultTableModel(convertData(), columnNames);
                 table.setModel(model);
                 updateColors();
@@ -68,7 +81,7 @@ public abstract class FundRefreshHandler {
     }
 
     private void updateColors() {
-        table.getColumn("估算涨跌").setCellRenderer(new DefaultTableCellRenderer() {
+        table.getColumn(table.getColumnName(2)).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 double temp = 0.0;
@@ -80,9 +93,17 @@ public abstract class FundRefreshHandler {
                 }
                 Color orgin = getForeground();
                 if (temp > 0) {
-                    setForeground(JBColor.RED);
+                    if (colorful){
+                        setForeground(JBColor.RED);
+                    }else {
+                        setForeground(JBColor.DARK_GRAY);
+                    }
                 } else if (temp < 0) {
-                    setForeground(JBColor.GREEN);
+                    if (colorful){
+                        setForeground(JBColor.GREEN);
+                    }else {
+                        setForeground(JBColor.GRAY);
+                    }
                 } else if (temp == 0) {
                     setForeground(orgin);
                 }
@@ -115,7 +136,7 @@ public abstract class FundRefreshHandler {
             if (fundBean.getGszzl()!=null){
                 gszzlStr= fundBean.getGszzl().startsWith("-")?fundBean.getGszzl():"+"+fundBean.getGszzl();
             }
-            temp[i] = new Object[]{fundBean.getFundName(), fundBean.getGsz(), gszzlStr+"%", timeStr};
+            temp[i] = new Object[]{colorful?fundBean.getFundName():PinYinUtils.toPinYin(fundBean.getFundName()), fundBean.getGsz(), gszzlStr+"%", timeStr};
         }
         return temp;
     }

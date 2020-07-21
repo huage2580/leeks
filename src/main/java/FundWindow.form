@@ -35,7 +35,7 @@
           <component id="84d9c" class="javax.swing.JLabel">
             <constraints border-constraint="West"/>
             <properties>
-              <text value="  小韭菜 V1.0"/>
+              <text value="  小韭菜 V1.3.2"/>
             </properties>
           </component>
         </children>

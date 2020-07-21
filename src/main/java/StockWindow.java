@@ -22,6 +22,8 @@ public class StockWindow {
     }
 
     public void onInit(){
+        boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
+        handler.setColorful(colorful);
         handler.handle(loadStocks());
     }
 

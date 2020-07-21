@@ -21,7 +21,9 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 支持了港股和美股 示例代码：（sh000001,sh600519,sz000001,hk00700,usAAPL）代码一般可以在各网页端看得到  
 - v1.3    
 插件由小韭菜更名为Leeks
-支持了IDEA 2020.1.3,兼容到`IDEA 2017.3`，修复macOS 行高问题（不确定
+支持了IDEA 2020.1.3,兼容到`IDEA 2017.3`，修复macOS 行高问题（不确定  
+- v1.4.1   
+增加了隐蔽模式（全拼音和无色涨跌幅
 ```$xslt
 IntelliJ IDEA 2020.1.3 (Community Edition)
 Build #IC-201.8538.31, built on July 7, 2020
