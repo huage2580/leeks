@@ -24,14 +24,5 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 支持了IDEA 2020.1.3,兼容到`IDEA 2017.3`，修复macOS 行高问题（不确定  
 - v1.4.1   
 增加了隐蔽模式（全拼音和无色涨跌幅
-```$xslt
-IntelliJ IDEA 2020.1.3 (Community Edition)
-Build #IC-201.8538.31, built on July 7, 2020
-Runtime version: 11.0.7+10-b765.64 amd64
-VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
-Windows 10 10.0
-GC: G1 Young Generation, G1 Old Generation
-Memory: 512M
-Cores: 6
-Non-Bundled Plugins: com.huage2580.leeks
-```
+- v1.4.2  
+支持到IDEA 2020.2.*

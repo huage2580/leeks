@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.huage2580'
-version '1.4.1'
+version '1.4.2'
 
 sourceCompatibility = 1.8
 
@@ -32,7 +32,7 @@ patchPluginXml {
         v1.4 增加了隐蔽模式（全拼音和无色涨跌幅
       """
     sinceBuild '173.*'
-//    untilBuild '201.*'
+    untilBuild '202.*'
 }
 
 tasks.withType(JavaCompile) {
