@@ -18,7 +18,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow icon="/icon.png" anchor="left" id="leeks" factoryClass="FundWindow"/>
+        <toolWindow anchor="left" id="leeks" factoryClass="FundWindow"/>
         <applicationConfigurable id="leeks_settings" instance="SettingsWindow"/>
     </extensions>
 

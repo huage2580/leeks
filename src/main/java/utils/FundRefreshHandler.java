@@ -1,6 +1,5 @@
 package utils;
 
-import com.github.promeg.pinyinhelper.Pinyin;
 import com.intellij.ui.JBColor;
 
 import javax.swing.*;
