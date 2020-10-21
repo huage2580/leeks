@@ -126,6 +126,9 @@ public abstract class FundRefreshHandler {
         for (int i = 0; i < data.size(); i++) {
             FundBean fundBean = data.get(i);
             String timeStr = fundBean.getGztime();
+            if(timeStr == null){
+                break;
+            }
 
             String today = dateFormat.format(new Date());
             if (timeStr!=null && timeStr.startsWith(today)) {
