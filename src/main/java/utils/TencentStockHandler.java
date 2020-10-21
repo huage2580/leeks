@@ -42,7 +42,7 @@ public class TencentStockHandler extends StockRefreshHandler {
                     try {
                         Thread.sleep(10 * 1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        //移除了中断线程的警告
                     }
                 }
             }
