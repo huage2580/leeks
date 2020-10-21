@@ -1,15 +1,16 @@
 package utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TencentStockHandler extends StockRefreshHandler {
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm ss");
 
-    private List<String> codes = new ArrayList<>();
+    private String urlPara;
 
     private Thread worker;
     private JLabel label;
@@ -46,13 +47,7 @@ public class TencentStockHandler extends StockRefreshHandler {
                 }
             }
         });
-        clear();
-        codes.clear();
-        codes.addAll(code);
-        //排序，按加入顺序
-        for (String s : codes) {
-            updateData(new StockBean(s));
-        }
+        urlPara = String.join(",", code);
         worker.start();
 
     }
@@ -67,18 +62,11 @@ public class TencentStockHandler extends StockRefreshHandler {
 //            }
 //            return;
 //        }
-        if (codes.isEmpty()){
+        if (StringUtils.isEmpty(urlPara)){
             return;
         }
-        StringBuilder stringBuffer = new StringBuilder();
-        for (int i = 0; i < codes.size(); i++) {
-            stringBuffer.append(codes.get(i));
-            if (i< codes.size()-1){
-                stringBuffer.append(',');
-            }
-        }
         try {
-            String result = HttpClientPool.getHttpClient().get("http://qt.gtimg.cn/q="+stringBuffer.toString());
+            String result = HttpClientPool.getHttpClient().get("http://qt.gtimg.cn/q="+urlPara);
             parse(result);
             updateUI();
         } catch (Exception e) {
@@ -102,9 +90,7 @@ public class TencentStockHandler extends StockRefreshHandler {
         }
     }
 
-    @Override
     public void updateUI() {
-        super.updateUI();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
