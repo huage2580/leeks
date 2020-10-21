@@ -109,7 +109,7 @@ public abstract class StockRefreshHandler {
     protected void updateData(StockBean bean) {
         Object[] convertData = convertData(bean);
         // 获取行
-        int index = findRowIndex(0, PinYinUtils.toPinYin(bean.getCode()));
+        int index = findRowIndex(0, bean.getCode());
         if (index >= 0) {
             for (int columnIndex = 0; columnIndex < convertData.length; columnIndex++) {
                 model.setValueAt(convertData[columnIndex], index, columnIndex);

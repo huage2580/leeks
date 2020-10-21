@@ -27,12 +27,13 @@ public class TianTianFundHandler extends FundRefreshHandler {
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()){
+                while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !Thread.currentThread().isInterrupted()){
                     stepAction();
                     try {
                         Thread.sleep(60 * 1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        //移除了中断线程的警告
                     }
                 }
             }
