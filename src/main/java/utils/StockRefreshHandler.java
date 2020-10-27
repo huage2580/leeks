@@ -10,23 +10,11 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
-public abstract class StockRefreshHandler {
-    private static String[] columnNames;
-    private static String[] columnNamesPy;
+public abstract class StockRefreshHandler extends DefaultTableModel {
+    private static String[] columnNames = new String[]{"编码", "股票名称", "当前价", "涨跌", "涨跌幅", "最高价", "最低价", "更新时间"};
 
-    private static String[] useColumnNames;
-
-    static {
-        columnNames = new String[]{"编码", "股票名称", "当前价", "涨跌", "涨跌幅", "更新时间"};
-        columnNamesPy = new String[columnNames.length];
-        for (int i = 0; i < columnNamesPy.length; i++) {
-            columnNamesPy[i] = PinYinUtils.toPinYin(columnNames[i]);
-        }
-        useColumnNames = columnNames;
-    }
-
-    private DefaultTableModel model;
     private JTable table;
     private boolean colorful = true;
 
@@ -36,31 +24,32 @@ public abstract class StockRefreshHandler {
         // Fix tree row height
         FontMetrics metrics = table.getFontMetrics(table.getFont());
         table.setRowHeight(Math.max(table.getRowHeight(), metrics.getHeight()));
-        Object[][] tableData = new Object[0][useColumnNames.length];
-        model = new DefaultTableModel(tableData, useColumnNames);
-        table.setModel(model);
-        columnColors(colorful);
+        table.setModel(this);
+        refreshColorful(!colorful);
     }
 
     public void refreshColorful(boolean colorful) {
+        if (this.colorful == colorful){
+            return;
+        }
         this.colorful = colorful;
         // 刷新表头
         if (colorful) {
-            useColumnNames = columnNames;
+            setColumnIdentifiers(columnNames);
         } else {
-            useColumnNames = columnNamesPy;
+            setColumnIdentifiers(PinYinUtils.toPinYin(columnNames));
         }
-        model.setColumnIdentifiers(useColumnNames);
-        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(this);
         Comparator<Object> dobleComparator = (o1, o2) -> {
             Double v1 = Double.parseDouble(StringUtils.remove((String) o1, '%'));
             Double v2 = Double.parseDouble(StringUtils.remove((String) o2, '%'));
-            System.out.println(v1 + " " + v2);
             return v1.compareTo(v2);
         };
         rowSorter.setComparator(2, dobleComparator);
         rowSorter.setComparator(3, dobleComparator);
         rowSorter.setComparator(4, dobleComparator);
+        rowSorter.setComparator(5, dobleComparator);
+        rowSorter.setComparator(6, dobleComparator);
         table.setRowSorter(rowSorter);
         columnColors(colorful);
     }
@@ -102,23 +91,32 @@ public abstract class StockRefreshHandler {
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-        table.getColumn(useColumnNames[3]).setCellRenderer(cellRenderer);
-        table.getColumn(useColumnNames[4]).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(4)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(StockBean bean) {
-        Object[] convertData = convertData(bean);
+        Vector<Object> convertData = convertData(bean);
         // 获取行
         int index = findRowIndex(0, bean.getCode());
         if (index >= 0) {
-            for (int columnIndex = 0; columnIndex < convertData.length; columnIndex++) {
-                model.setValueAt(convertData[columnIndex], index, columnIndex);
-            }
+            updateRow(index, convertData);
         } else {
-            model.addRow(convertData);
+            addRow(convertData);
         }
     }
 
+    /**
+     * 参考源码{@link DefaultTableModel#setValueAt}，此为直接更新行，提高点效率
+     *
+     * @param rowIndex
+     * @param rowData
+     */
+    protected void updateRow(int rowIndex, Vector<Object> rowData) {
+        dataVector.set(rowIndex, rowData);
+        // 通知listeners刷新ui
+        fireTableRowsUpdated(rowIndex, rowIndex);
+    }
     /**
      * 查找列项中的valueName所在的行
      *
@@ -127,9 +125,9 @@ public abstract class StockRefreshHandler {
      * @return 如果不存在返回-1
      */
     protected int findRowIndex(int columnIndex, String value) {
-        int rowCount = model.getRowCount();
+        int rowCount = getRowCount();
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            Object valueAt = model.getValueAt(rowIndex, columnIndex);
+            Object valueAt = getValueAt(rowIndex, columnIndex);
             if (StringUtils.equalsIgnoreCase(value, valueAt.toString())) {
                 return rowIndex;
             }
@@ -137,7 +135,7 @@ public abstract class StockRefreshHandler {
         return -1;
     }
 
-    private Object[] convertData(StockBean fundBean) {
+    private Vector<Object> convertData(StockBean fundBean) {
         String timeStr = fundBean.getTime().substring(8);
         String changeStr = "--";
         String changePercentStr = "--";
@@ -147,7 +145,21 @@ public abstract class StockRefreshHandler {
         if (fundBean.getChangePercent()!=null){
             changePercentStr= fundBean.getChangePercent().startsWith("-")?fundBean.getChangePercent():"+"+fundBean.getChangePercent();
         }
-        return new Object[]{fundBean.getCode(),colorful?fundBean.getName():PinYinUtils.toPinYin(fundBean.getName()),
-                fundBean.getNow(), changeStr, changePercentStr+"%", timeStr};
+        // 与columnNames中的元素保持一致
+        Vector<Object> v = new Vector<Object>(columnNames.length);
+        v.addElement(fundBean.getCode());
+        v.addElement(colorful ? fundBean.getName() : PinYinUtils.toPinYin(fundBean.getName()));
+        v.addElement(fundBean.getNow());
+        v.addElement(changeStr);
+        v.addElement(changePercentStr + "%");
+        v.addElement(fundBean.getMax());
+        v.addElement(fundBean.getMin());
+        v.addElement(timeStr);
+        return v;
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
     }
 }

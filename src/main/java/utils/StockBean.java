@@ -9,6 +9,14 @@ public class StockBean {
     private String change;//涨跌
     private String changePercent;
     private String time;
+    /**
+     * 最高价
+     */
+    private String max;
+    /**
+     * 最低价
+     */
+    private String min;
 
     public StockBean() {
     }
@@ -64,6 +72,22 @@ public class StockBean {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getMax() {
+        return max;
+    }
+
+    public void setMax(String max) {
+        this.max = max;
+    }
+
+    public String getMin() {
+        return min;
+    }
+
+    public void setMin(String min) {
+        this.min = min;
     }
 
     @Override
