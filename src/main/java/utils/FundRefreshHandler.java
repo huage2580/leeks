@@ -1,20 +1,23 @@
 package utils;
 
 import com.intellij.ui.JBColor;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
-public abstract class FundRefreshHandler {
-    private ArrayList<FundBean> data = new ArrayList<>();
+public abstract class FundRefreshHandler extends DefaultTableModel{
+    private static String[] columnNames = {"编码", "基金名称", "估算净值", "估算涨跌", "更新时间"};
+
     private JTable table;
-    private int[] sizes = new int[]{0,0,0,0};
     private boolean colorful = true;
 
 
@@ -24,11 +27,31 @@ public abstract class FundRefreshHandler {
         // Fix tree row height
         FontMetrics metrics = table.getFontMetrics(table.getFont());
         table.setRowHeight(Math.max(table.getRowHeight(), metrics.getHeight()));
-
+        table.setModel(this);
+        refreshColorful(!colorful);
     }
 
-    public void setColorful(boolean colorful) {
+    public void refreshColorful(boolean colorful) {
+        if (this.colorful == colorful){
+            return;
+        }
         this.colorful = colorful;
+        // 刷新表头
+        if (colorful) {
+            setColumnIdentifiers(columnNames);
+        } else {
+            setColumnIdentifiers(PinYinUtils.toPinYin(columnNames));
+        }
+        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(this);
+        Comparator<Object> dobleComparator = (o1, o2) -> {
+            Double v1 = Double.parseDouble(StringUtils.remove((String) o1, '%'));
+            Double v2 = Double.parseDouble(StringUtils.remove((String) o2, '%'));
+            return v1.compareTo(v2);
+        };
+        rowSorter.setComparator(2, dobleComparator);
+        rowSorter.setComparator(3, dobleComparator);
+        table.setRowSorter(rowSorter);
+        columnColors(colorful);
     }
 
     /**
@@ -38,49 +61,8 @@ public abstract class FundRefreshHandler {
      */
     public abstract void handle(List<String> code);
 
-    /**
-     * 更新全部数据
-     */
-    public void updateUI() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                recordTableSize();
-                String[] columnNames = {"基金名称", "估算净值", "估算涨跌", "更新时间"};
-                if (!colorful){
-                    for (int i = 0; i < columnNames.length; i++) {
-                        columnNames[i] = PinYinUtils.toPinYin(columnNames[i]);
-                    }
-                }
-                DefaultTableModel model = new DefaultTableModel(convertData(), columnNames);
-                table.setModel(model);
-                updateColors();
-                resizeTable();
-
-            }
-        });
-    }
-
-    private void recordTableSize() {
-        if (table.getColumnModel().getColumnCount() == 0){
-            return;
-        }
-        for (int i = 0; i < sizes.length; i++) {
-            sizes[i] = table.getColumnModel().getColumn(i).getWidth();
-        }
-    }
-
-    private void resizeTable() {
-        for (int i = 0; i < sizes.length; i++) {
-            if (sizes[i] > 0){
-                table.getColumnModel().getColumn(i).setWidth(sizes[i]);
-                table.getColumnModel().getColumn(i).setPreferredWidth(sizes[i]);
-            }
-        }
-    }
-
-    private void updateColors() {
-        table.getColumn(table.getColumnName(2)).setCellRenderer(new DefaultTableCellRenderer() {
+    private void columnColors(boolean colorful) {
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 double temp = 0.0;
@@ -90,7 +72,6 @@ public abstract class FundRefreshHandler {
                 } catch (Exception e) {
 
                 }
-                Color orgin = getForeground();
                 if (temp > 0) {
                     if (colorful){
                         setForeground(JBColor.RED);
@@ -104,46 +85,85 @@ public abstract class FundRefreshHandler {
                         setForeground(JBColor.GRAY);
                     }
                 } else if (temp == 0) {
+                    Color orgin = getForeground();
                     setForeground(orgin);
                 }
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
-        });
+        };
+        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(FundBean bean) {
-        int index = data.indexOf(bean);
+        Vector<Object> convertData = convertData(bean);
+        if (convertData==null){
+            return;
+        }
+        // 获取行
+        int index = findRowIndex(0, bean.getFundCode());
         if (index >= 0) {
-            data.set(index, bean);
+            updateRow(index, convertData);
         } else {
-            data.add(bean);
+            addRow(convertData);
         }
     }
 
-    private Object[][] convertData() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Object[][] temp = new Object[data.size()][4];
-        for (int i = 0; i < data.size(); i++) {
-            FundBean fundBean = data.get(i);
-            String timeStr = fundBean.getGztime();
-            if(timeStr == null){
-                break;
+    /**
+     * 参考源码{@link DefaultTableModel#setValueAt}，此为直接更新行，提高点效率
+     *
+     * @param rowIndex
+     * @param rowData
+     */
+    protected void updateRow(int rowIndex, Vector<Object> rowData) {
+        dataVector.set(rowIndex, rowData);
+        // 通知listeners刷新ui
+        fireTableRowsUpdated(rowIndex, rowIndex);
+    }
+    /**
+     * 查找列项中的valueName所在的行
+     *
+     * @param columnIndex 列号
+     * @param value       值
+     * @return 如果不存在返回-1
+     */
+    protected int findRowIndex(int columnIndex, String value) {
+        int rowCount = getRowCount();
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            Object valueAt = getValueAt(rowIndex, columnIndex);
+            if (StringUtils.equalsIgnoreCase(value, valueAt.toString())) {
+                return rowIndex;
             }
-
-            String today = dateFormat.format(new Date());
-            if (timeStr!=null && timeStr.startsWith(today)) {
-                timeStr = timeStr.substring(timeStr.indexOf(" "));
-            }
-            String gszzlStr = "--";
-            if (fundBean.getGszzl()!=null){
-                gszzlStr= fundBean.getGszzl().startsWith("-")?fundBean.getGszzl():"+"+fundBean.getGszzl();
-            }
-            temp[i] = new Object[]{colorful?fundBean.getFundName():PinYinUtils.toPinYin(fundBean.getFundName()), fundBean.getGsz(), gszzlStr+"%", timeStr};
         }
-        return temp;
+        return -1;
     }
 
-    protected void clear(){
-        data.clear();
+    private Vector<Object> convertData(FundBean fundBean) {
+        String timeStr = fundBean.getGztime();
+        if(timeStr == null){
+            return null;
+        }
+        String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+        if (timeStr.startsWith(today)) {
+            timeStr = timeStr.substring(timeStr.indexOf(" "));
+        }
+        String gszzlStr = "--";
+        String gszzl = fundBean.getGszzl();
+        if (gszzl !=null){
+            gszzlStr= gszzl.startsWith("-")? gszzl :"+"+ gszzl;
+        }
+        // 与columnNames中的元素保持一致
+        Vector<Object> v = new Vector<Object>(columnNames.length);
+        v.addElement(fundBean.getFundCode());
+        v.addElement(colorful ? fundBean.getFundName() : PinYinUtils.toPinYin(fundBean.getFundName()));
+        v.addElement(fundBean.getGsz());
+        v.addElement( gszzlStr+"%");
+        v.addElement(timeStr);
+        return v;
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
     }
 }

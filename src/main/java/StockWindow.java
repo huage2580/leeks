@@ -38,21 +38,7 @@ public class StockWindow {
     }
 
     private static List<String> loadStocks(){
-        ArrayList<String> temp = new ArrayList<>();
-        String value = PropertiesComponent.getInstance().getValue("key_stocks");
-//        String value = "sh600519,sz000001";
-        if (value == null){
-            return temp;
-        }
-        Set<String> set = new HashSet<>();
-        String[] codes = value.split("[,，]");
-        for (String code : codes) {
-            if (!code.isEmpty()){
-                set.add(code.trim());
-            }
-        }
-        temp.addAll(set);
-        return temp;
+        return FundWindow.getConfigList("key_stocks", "[,，]");
     }
 
 }

@@ -3,16 +3,21 @@ package utils;
 import com.google.gson.Gson;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TianTianFundHandler extends FundRefreshHandler {
+    public static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
     private static Gson gson = new Gson();
     private List<String> codes = new ArrayList<>();
 
     private Thread worker;
-    public TianTianFundHandler(JTable table) {
+    private JButton refreshButton;
+    public TianTianFundHandler(JTable table, JButton refreshButton) {
         super(table);
+        this.refreshButton = refreshButton;
     }
 
     @Override
@@ -27,7 +32,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !Thread.currentThread().isInterrupted()){
+                while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()){
                     stepAction();
                     try {
                         Thread.sleep(60 * 1000);
@@ -38,13 +43,8 @@ public class TianTianFundHandler extends FundRefreshHandler {
                 }
             }
         });
-        clear();
         codes.clear();
         codes.addAll(code);
-        //排序，按加入顺序
-        for (String s : codes) {
-            updateData(new FundBean(s));
-        }
         worker.start();
     }
 
@@ -59,12 +59,20 @@ public class TianTianFundHandler extends FundRefreshHandler {
                         String json = result.substring(8,result.length()-2);
                         FundBean bean = gson.fromJson(json,FundBean.class);
                         updateData(bean);
-                        updateUI();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
         }
+        updateUI();
+    }
+    public void updateUI() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                refreshButton.setText("最后刷新时间: "+ LocalDateTime.now().format(timeFormatter));
+            }
+        });
     }
 }
