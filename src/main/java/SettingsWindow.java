@@ -42,5 +42,6 @@ public class SettingsWindow  implements Configurable {
         PropertiesComponent.getInstance().setValue("key_stocks",textField2.getText());
         PropertiesComponent.getInstance().setValue("key_colorful",!checkbox.isSelected());
         StockWindow.apply();
+        FundWindow.apply();
     }
 }

@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TencentStockHandler extends StockRefreshHandler {
@@ -86,6 +86,8 @@ public class TencentStockHandler extends StockRefreshHandler {
             bean.setChange(values[31]);
             bean.setChangePercent(values[32]);
             bean.setTime(values[30]);
+            bean.setMax(values[41]);
+            bean.setMin(values[42]);
             updateData(bean);
         }
     }
@@ -94,7 +96,7 @@ public class TencentStockHandler extends StockRefreshHandler {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                label.setText("最后刷新时间:"+dateFormat.format(new Date()));
+                label.setText("最后刷新时间: "+ LocalDateTime.now().format(TianTianFundHandler.timeFormatter));
             }
         });
     }
