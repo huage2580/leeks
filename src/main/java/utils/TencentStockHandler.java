@@ -86,8 +86,8 @@ public class TencentStockHandler extends StockRefreshHandler {
             bean.setChange(values[31]);
             bean.setChangePercent(values[32]);
             bean.setTime(values[30]);
-            bean.setMax(values[41]);
-            bean.setMin(values[42]);
+            bean.setMax(values[33]);//33
+            bean.setMin(values[34]);//34
             updateData(bean);
         }
     }

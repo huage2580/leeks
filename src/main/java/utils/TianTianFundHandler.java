@@ -11,7 +11,7 @@ import java.util.List;
 public class TianTianFundHandler extends FundRefreshHandler {
     public static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
     private static Gson gson = new Gson();
-    private List<String> codes = new ArrayList<>();
+    private final List<String> codes = new ArrayList<>();
 
     private Thread worker;
     private JButton refreshButton;
@@ -33,7 +33,9 @@ public class TianTianFundHandler extends FundRefreshHandler {
             @Override
             public void run() {
                 while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()){
-                    stepAction();
+                    synchronized (codes){
+                        stepAction();
+                    }
                     try {
                         Thread.sleep(60 * 1000);
                     } catch (InterruptedException e) {
@@ -43,8 +45,10 @@ public class TianTianFundHandler extends FundRefreshHandler {
                 }
             }
         });
-        codes.clear();
-        codes.addAll(code);
+        synchronized (codes){
+            codes.clear();
+            codes.addAll(code);
+        }
         worker.start();
     }
 
@@ -57,8 +61,12 @@ public class TianTianFundHandler extends FundRefreshHandler {
                     try {
                         String result = HttpClientPool.getHttpClient().get("http://fundgz.1234567.com.cn/js/"+s+".js?rt="+System.currentTimeMillis());
                         String json = result.substring(8,result.length()-2);
-                        FundBean bean = gson.fromJson(json,FundBean.class);
-                        updateData(bean);
+                        if(!json.isEmpty()){
+                            FundBean bean = gson.fromJson(json,FundBean.class);
+                            updateData(bean);
+                        }else {
+                            LogUtil.info("基金编码:["+s+"]无法获取数据");
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
