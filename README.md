@@ -28,5 +28,7 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 - v1.4.2  
 支持到IDEA 2020.2.*
 - v1.5.1  
-增加了股票界面按表头排序，设置界面及时生效，不用点击refresh按钮啦  merge from [dengerYang](https://github.com/dengerYang)
+增加了股票界面按表头排序，设置界面及时生效，不用点击refresh按钮啦  merge from [dengerYang](https://github.com/dengerYang)  
+- v1.5.2  
+增加了股票的最高价最低价 . merge from [dengerYang](https://github.com/dengerYang) 
 
