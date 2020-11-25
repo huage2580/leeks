@@ -61,6 +61,11 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
      */
     public abstract void handle(List<String> code);
 
+    /**
+     * 停止从网络更新数据
+     */
+    public abstract void stopHandle();
+
     private void columnColors(boolean colorful) {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override

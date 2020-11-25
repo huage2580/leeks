@@ -1,44 +1,50 @@
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
+import utils.ButtonEnableUtil;
 import utils.StockRefreshHandler;
 import utils.TencentStockHandler;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class StockWindow {
-    private JPanel panel1;
+    private JPanel mPanel;
     private JTable table1;
-    private JLabel label;
+    private JButton refreshButton;
+    private JPanel toolPanel;
+    private JButton stopButton;
+    private JLabel refreshTime;
 
     static StockRefreshHandler handler;
 
     public JPanel getPanel1() {
-        return panel1;
+        return mPanel;
     }
 
     public StockWindow() {
-        handler = new TencentStockHandler(table1,label);
+        handler = new TencentStockHandler(table1, refreshTime);
+        // 刷新
+        refreshButton.setIcon(AllIcons.Actions.Refresh);
+        refreshButton.addActionListener(e -> {
+            apply();
+            ButtonEnableUtil.disableByTime(refreshButton, 2);
+        });
+        // 停止
+        stopButton.setIcon(AllIcons.Actions.StopRefresh);
+        stopButton.addActionListener(e -> {
+            handler.stopHandle();
+            ButtonEnableUtil.disableByTime(stopButton, 2);
+        });
+        // 非主要tab，需要创建，创建时立即应用数据
+        apply();
     }
 
     public static void apply() {
         if (handler != null) {
             boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
             handler.refreshColorful(colorful);
-            handler.handle(loadStocks());
+            List<String> key_stocks = FundWindow.getConfigList("key_stocks", "[,，]");
+            handler.handle(key_stocks);
         }
     }
-
-    public void onInit(){
-        boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-        handler.refreshColorful(colorful);
-        handler.handle(loadStocks());
-    }
-
-    private static List<String> loadStocks(){
-        return FundWindow.getConfigList("key_stocks", "[,，]");
-    }
-
 }

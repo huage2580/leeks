@@ -1,34 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="StockWindow">
-  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+  <grid id="27dc6" binding="mPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <scrollpane id="1c243">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
+      <scrollpane id="83aba">
+        <constraints border-constraint="Center"/>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="c270b" class="javax.swing.JTable" binding="table1" default-binding="true">
+          <component id="ca069" class="javax.swing.JTable" binding="table1" default-binding="true">
             <constraints/>
-            <properties/>
+            <properties>
+              <fillsViewportHeight value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
-      <component id="cb8e9" class="javax.swing.JLabel" binding="label">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
+      <grid id="9e843" binding="toolPanel" layout-manager="FlowLayout" hgap="2" vgap="2" flow-align="0">
+        <constraints border-constraint="North"/>
         <properties>
-          <text value="时间戳"/>
+          <alignmentX value="0.0"/>
+          <alignmentY value="0.0"/>
+          <minimumSize width="28" height="28"/>
+          <preferredSize width="28" height="28"/>
         </properties>
-      </component>
+        <border type="none"/>
+        <children>
+          <component id="c526c" class="javax.swing.JButton" binding="refreshButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="false"/>
+              <background color="-855310"/>
+              <borderPainted value="false"/>
+              <contentAreaFilled value="false"/>
+              <defaultCapable value="false"/>
+              <doubleBuffered value="false"/>
+              <enabled value="true"/>
+              <focusCycleRoot value="false"/>
+              <focusPainted value="false"/>
+              <focusTraversalPolicyProvider value="false"/>
+              <focusable value="false"/>
+              <font/>
+              <foreground color="-16777216"/>
+              <hideActionText value="false"/>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
+              <icon value="actions/refresh.png"/>
+              <inheritsPopupMenu value="false"/>
+              <margin top="0" left="0" bottom="0" right="0"/>
+              <maximumSize width="24" height="24"/>
+              <minimumSize width="24" height="24"/>
+              <preferredSize width="24" height="24"/>
+              <requestFocusEnabled value="false"/>
+              <rolloverEnabled value="false"/>
+              <selected value="false"/>
+              <text value=""/>
+              <toolTipText value="刷新当前表格"/>
+              <verifyInputWhenFocusTarget value="false"/>
+              <verticalAlignment value="0"/>
+              <visible value="true"/>
+            </properties>
+          </component>
+          <component id="5b6f9" class="javax.swing.JButton" binding="stopButton">
+            <constraints/>
+            <properties>
+              <alignmentY value="0.0"/>
+              <autoscrolls value="false"/>
+              <background color="-855310"/>
+              <borderPainted value="false"/>
+              <contentAreaFilled value="false"/>
+              <defaultCapable value="false"/>
+              <doubleBuffered value="false"/>
+              <enabled value="true"/>
+              <focusCycleRoot value="false"/>
+              <focusPainted value="false"/>
+              <focusTraversalPolicyProvider value="false"/>
+              <focusable value="false"/>
+              <font/>
+              <foreground color="-16777216"/>
+              <hideActionText value="false"/>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
+              <icon value="process/stop.png"/>
+              <inheritsPopupMenu value="false"/>
+              <margin top="0" left="0" bottom="0" right="0"/>
+              <maximumSize width="24" height="24"/>
+              <minimumSize width="24" height="24"/>
+              <preferredSize width="24" height="24"/>
+              <requestFocusEnabled value="false"/>
+              <rolloverEnabled value="true"/>
+              <selected value="false"/>
+              <text value=""/>
+              <toolTipText value="停止刷新当前表格"/>
+              <verifyInputWhenFocusTarget value="false"/>
+              <verticalAlignment value="0"/>
+              <visible value="true"/>
+            </properties>
+          </component>
+          <component id="269a2" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="f67e1" class="javax.swing.JLabel" binding="refreshTime">
+            <constraints/>
+            <properties>
+              <requestFocusEnabled value="true"/>
+              <text value=""/>
+              <toolTipText value="最后刷新时间"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>

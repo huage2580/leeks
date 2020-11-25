@@ -8,31 +8,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TencentStockHandler extends StockRefreshHandler {
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm ss");
-
     private String urlPara;
 
     private Thread worker;
-    private JLabel label;
+    private JLabel refreshTime;
 
     public TencentStockHandler(JTable table) {
         super(table);
     }
 
-    public TencentStockHandler(JTable table1, JLabel label) {
+    public TencentStockHandler(JTable table1, JLabel refreshTime) {
         super(table1);
-        this.label = label;
+        this.refreshTime = refreshTime;
     }
 
     @Override
     public void handle(List<String> code) {
-
+        if (worker!=null){
+            worker.interrupt();
+        }
         LogUtil.info("Leeks 更新股票编码数据.");
         if (code.isEmpty()){
             return;
-        }
-        if (worker!=null){
-            worker.interrupt();
         }
         worker = new Thread(new Runnable() {
             @Override
@@ -42,7 +39,9 @@ public class TencentStockHandler extends StockRefreshHandler {
                     try {
                         Thread.sleep(10 * 1000);
                     } catch (InterruptedException e) {
-                        //移除了中断线程的警告
+                        LogUtil.info("Leeks 已停止更新股票编码数据.");
+                        refreshTime.setText("stop");
+                        return;
                     }
                 }
             }
@@ -74,6 +73,14 @@ public class TencentStockHandler extends StockRefreshHandler {
         }
     }
 
+    @Override
+    public void stopHandle() {
+        if (worker != null) {
+            worker.interrupt();
+            LogUtil.info("Leeks 准备停止更新股票编码数据.");
+        }
+    }
+
     private void parse(String result) {
         String[] lines = result.split("\n");
         for (String line : lines) {
@@ -96,7 +103,7 @@ public class TencentStockHandler extends StockRefreshHandler {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                label.setText("最后刷新时间: "+ LocalDateTime.now().format(TianTianFundHandler.timeFormatter));
+                refreshTime.setText(LocalDateTime.now().format(TianTianFundHandler.timeFormatter));
             }
         });
     }

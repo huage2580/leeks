@@ -1,18 +1,19 @@
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import utils.ButtonEnableUtil;
 import utils.FundRefreshHandler;
 import utils.LogUtil;
 import utils.TianTianFundHandler;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,9 @@ public class FundWindow implements ToolWindowFactory {
     private JPanel mPanel;
     private JTable table1;
     private JButton refreshButton;
+    private JPanel toolPanel;
+    private JButton stopButton;
+    private JLabel refreshTime;
 
     static FundRefreshHandler fundRefreshHandler;
 
@@ -35,8 +39,9 @@ public class FundWindow implements ToolWindowFactory {
         Content content = contentFactory.createContent(mPanel, "Fund", false);
 
         Content content_stock = contentFactory.createContent(stockWindow.getPanel1(), "Stock", false);
-        toolWindow.getContentManager().addContent(content);
-        toolWindow.getContentManager().addContent(content_stock);
+        ContentManager contentManager = toolWindow.getContentManager();
+        contentManager.addContent(content);
+        contentManager.addContent(content_stock);
         LogUtil.setProject(project);
 //        ((ToolWindowManagerEx) ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerListener() {
 //            @Override
@@ -46,39 +51,24 @@ public class FundWindow implements ToolWindowFactory {
 //                }
 //            }
 //        });
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-                fundRefreshHandler.refreshColorful(colorful);
-                fundRefreshHandler.handle(loadFunds());
-                stockWindow.onInit();
-                // 防止频繁点击，等待3秒
-                refreshButton.setEnabled(false);
-                new Thread(() -> {
-                    try {
-                        TimeUnit.SECONDS.sleep(3);
-                    } catch (InterruptedException ex) {
-                    }finally {
-                        refreshButton.setEnabled(true);
-                    }
-                }).start();
-            }
-        });
-
     }
 
     @Override
     public void init(ToolWindow window) {
-        boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-        fundRefreshHandler = new TianTianFundHandler(table1, refreshButton);
-        fundRefreshHandler.refreshColorful(colorful);
-        fundRefreshHandler.handle(loadFunds());
-        stockWindow.onInit();
-    }
-
-    private static List<String> loadFunds(){
-        return getConfigList("key_funds", "[,，]");
+        fundRefreshHandler = new TianTianFundHandler(table1, refreshTime);
+        // 刷新
+        refreshButton.setIcon(AllIcons.Actions.Refresh);
+        refreshButton.addActionListener(e -> {
+            apply();
+            ButtonEnableUtil.disableByTime(refreshButton, 2);
+        });
+        // 停止
+        stopButton.setIcon(AllIcons.Actions.StopRefresh);
+        stopButton.addActionListener(e -> {
+            fundRefreshHandler.stopHandle();
+            ButtonEnableUtil.disableByTime(stopButton, 2);
+        });
+        apply();
     }
 
     public static List<String> getConfigList(String key, String split) {
@@ -111,7 +101,8 @@ public class FundWindow implements ToolWindowFactory {
         if (fundRefreshHandler != null) {
             boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
             fundRefreshHandler.refreshColorful(colorful);
-            fundRefreshHandler.handle(loadFunds());
+            List<String> key_funds = getConfigList("key_funds", "[,，]");
+            fundRefreshHandler.handle(key_funds);
         }
     }
 }
