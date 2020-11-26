@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 public abstract class FundRefreshHandler extends DefaultTableModel{
-    private static String[] columnNames = {"编码", "基金名称", "估算净值", "估算涨跌", "更新时间"};
+    private static String[] columnNames = {"编码", "基金名称", "当日净值", "估算净值", "估算涨跌", "更新时间"};
 
     private JTable table;
     private boolean colorful = true;
@@ -98,6 +98,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         };
         table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
         table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(4)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(FundBean bean) {
@@ -161,6 +162,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         Vector<Object> v = new Vector<Object>(columnNames.length);
         v.addElement(fundBean.getFundCode());
         v.addElement(colorful ? fundBean.getFundName() : PinYinUtils.toPinYin(fundBean.getFundName()));
+        v.addElement(fundBean.getDwjz());
         v.addElement(fundBean.getGsz());
         v.addElement( gszzlStr+"%");
         v.addElement(timeStr);
