@@ -1,19 +1,21 @@
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
-import utils.ButtonEnableUtil;
+import com.intellij.openapi.actionSystem.ActionToolbarPosition;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.table.JBTable;
+import org.jetbrains.annotations.NotNull;
 import utils.StockRefreshHandler;
 import utils.TencentStockHandler;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.util.List;
 
 public class StockWindow {
     private JPanel mPanel;
-    private JTable table1;
-    private JButton refreshButton;
-    private JPanel toolPanel;
-    private JButton stopButton;
-    private JLabel refreshTime;
 
     static StockRefreshHandler handler;
 
@@ -22,19 +24,33 @@ public class StockWindow {
     }
 
     public StockWindow() {
-        handler = new TencentStockHandler(table1, refreshTime);
-        // 刷新
-        refreshButton.setIcon(AllIcons.Actions.Refresh);
-        refreshButton.addActionListener(e -> {
-            apply();
-            ButtonEnableUtil.disableByTime(refreshButton, 2);
-        });
-        // 停止
-        stopButton.setIcon(AllIcons.Actions.StopRefresh);
-        stopButton.addActionListener(e -> {
-            handler.stopHandle();
-            ButtonEnableUtil.disableByTime(stopButton, 2);
-        });
+        JLabel refreshTimeLabel = new JLabel();
+        refreshTimeLabel.setToolTipText("最后刷新时间");
+        refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        JTable table1 = new JBTable();
+        handler = new TencentStockHandler(table1, refreshTimeLabel);
+        AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+                handler.stopHandle();
+                this.setEnabled(false);
+            }
+        };
+        ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(table1)
+                .addExtraAction(new AnActionButton("持续刷新当前表格数据",
+                        AllIcons.Actions.Refresh) {
+                    @Override
+                    public void actionPerformed(@NotNull AnActionEvent e) {
+                        apply();
+                        refreshAction.setEnabled(true);
+                    }
+                })
+                .addExtraAction(refreshAction)
+                .setToolbarPosition(ActionToolbarPosition.TOP);
+        JPanel toolPanel = toolbarDecorator.createPanel();
+        toolbarDecorator.getActionsPanel().add(refreshTimeLabel, BorderLayout.EAST);
+        toolPanel.setBorder(new EmptyBorder(0,0,0,0));
+        mPanel.add(toolPanel, BorderLayout.CENTER);
         // 非主要tab，需要创建，创建时立即应用数据
         apply();
     }

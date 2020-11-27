@@ -1,32 +1,31 @@
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.actionSystem.ActionToolbarPosition;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import utils.ButtonEnableUtil;
 import utils.FundRefreshHandler;
 import utils.LogUtil;
 import utils.TianTianFundHandler;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class FundWindow implements ToolWindowFactory {
     private JPanel mPanel;
-    private JTable table1;
-    private JButton refreshButton;
-    private JPanel toolPanel;
-    private JButton stopButton;
-    private JLabel refreshTime;
 
     static FundRefreshHandler fundRefreshHandler;
 
@@ -55,19 +54,32 @@ public class FundWindow implements ToolWindowFactory {
 
     @Override
     public void init(ToolWindow window) {
-        fundRefreshHandler = new TianTianFundHandler(table1, refreshTime);
-        // 刷新
-        refreshButton.setIcon(AllIcons.Actions.Refresh);
-        refreshButton.addActionListener(e -> {
-            apply();
-            ButtonEnableUtil.disableByTime(refreshButton, 2);
-        });
-        // 停止
-        stopButton.setIcon(AllIcons.Actions.StopRefresh);
-        stopButton.addActionListener(e -> {
-            fundRefreshHandler.stopHandle();
-            ButtonEnableUtil.disableByTime(stopButton, 2);
-        });
+        JLabel refreshTimeLabel = new JLabel();
+        refreshTimeLabel.setToolTipText("最后刷新时间");
+        refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        JTable table = new JTable();
+        fundRefreshHandler = new TianTianFundHandler(table, refreshTimeLabel);
+        AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+                fundRefreshHandler.stopHandle();
+                this.setEnabled(false);
+            }
+        };
+        ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(table)
+                .addExtraAction(new AnActionButton("持续刷新当前表格数据", AllIcons.Actions.Refresh) {
+                    @Override
+                    public void actionPerformed(@NotNull AnActionEvent e) {
+                        apply();
+                        refreshAction.setEnabled(true);
+                    }
+                })
+                .addExtraAction(refreshAction)
+                .setToolbarPosition(ActionToolbarPosition.TOP);
+        JPanel toolPanel = toolbarDecorator.createPanel();
+        toolbarDecorator.getActionsPanel().add(refreshTimeLabel, BorderLayout.EAST);
+        toolPanel.setBorder(new EmptyBorder(0,0,0,0));
+        mPanel.add(toolPanel, BorderLayout.CENTER);
         apply();
     }
 
