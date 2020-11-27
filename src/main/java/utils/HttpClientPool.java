@@ -1,6 +1,7 @@
 package utils;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -11,6 +12,8 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author by laugh on 2016/3/29.
@@ -18,7 +21,7 @@ import java.net.URLDecoder;
 public class HttpClientPool {
 
     private static volatile HttpClientPool clientInstance;
-    private static PoolingHttpClientConnectionManager connectionManager;
+    private HttpClient httpClient;
 
     public static HttpClientPool getHttpClient() {
         HttpClientPool tmp = clientInstance;
@@ -35,14 +38,12 @@ public class HttpClientPool {
     }
 
     private HttpClientPool() {
-        connectionManager = new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(100, TimeUnit.SECONDS);
         connectionManager.setMaxTotal(200);// 连接池
         connectionManager.setDefaultMaxPerRoute(100);// 每条通道的并发连接数
-    }
 
-    private CloseableHttpClient getHttpClient(int connectionTimeout, int socketTimeOut) {
-        RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(socketTimeOut).build();
-        return HttpClients.custom().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig).build();
+        RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(2000).setSocketTimeout(2000).build();
+        httpClient = HttpClients.custom().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig).build();
     }
 
     public String get(String url) throws Exception {
@@ -58,8 +59,8 @@ public class HttpClientPool {
     private String getResponseContent(String url, HttpRequestBase request) throws Exception {
         HttpResponse response = null;
         try {
-            response = this.getHttpClient(2000,2000).execute(request);
-            return EntityUtils.toString(response.getEntity(),"utf-8");
+            response = httpClient.execute(request);
+            return EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new Exception("got an error from HTTP for url : " + URLDecoder.decode(url, "UTF-8"),e);
         } finally {
