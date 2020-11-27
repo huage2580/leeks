@@ -61,6 +61,11 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
      */
     public abstract void handle(List<String> code);
 
+    /**
+     * 停止从网络更新数据
+     */
+    public abstract void stopHandle();
+
     private void columnColors(boolean colorful) {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
@@ -117,6 +122,19 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         // 通知listeners刷新ui
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
+
+    /**
+     * 参考源码{@link DefaultTableModel#removeRow(int)}，此为直接清除全部行，提高点效率
+     */
+    protected void clearRow() {
+        int size = dataVector.size();
+        if (0 < size) {
+            dataVector.clear();
+            // 通知listeners刷新ui
+            fireTableRowsDeleted(0, size - 1);
+        }
+    }
+
     /**
      * 查找列项中的valueName所在的行
      *

@@ -6,40 +6,6 @@
     </constraints>
     <properties/>
     <border type="none"/>
-    <children>
-      <scrollpane id="83aba">
-        <constraints border-constraint="Center"/>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="ca069" class="javax.swing.JTable" binding="table1" default-binding="true">
-            <constraints/>
-            <properties>
-              <fillsViewportHeight value="true"/>
-            </properties>
-          </component>
-        </children>
-      </scrollpane>
-      <grid id="9e843" layout-manager="BorderLayout" hgap="0" vgap="0">
-        <constraints border-constraint="South"/>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="c526c" class="javax.swing.JButton" binding="refreshButton" default-binding="true">
-            <constraints border-constraint="East"/>
-            <properties>
-              <font/>
-              <text value="Refresh"/>
-            </properties>
-          </component>
-          <component id="84d9c" class="javax.swing.JLabel">
-            <constraints border-constraint="West"/>
-            <properties>
-              <text value="  小韭菜 V1.5.1"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
-    </children>
+    <children/>
   </grid>
 </form>

@@ -1,7 +1,12 @@
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.actionSystem.ActionToolbarPosition;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -11,18 +16,15 @@ import utils.LogUtil;
 import utils.TianTianFundHandler;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class FundWindow implements ToolWindowFactory {
     private JPanel mPanel;
-    private JTable table1;
-    private JButton refreshButton;
 
     static FundRefreshHandler fundRefreshHandler;
 
@@ -34,7 +36,7 @@ public class FundWindow implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(mPanel, "Fund", false);
 
-        Content content_stock = contentFactory.createContent(stockWindow.getPanel1(), "Stock", false);
+        Content content_stock = contentFactory.createContent(stockWindow.getmPanel(), "Stock", false);
         toolWindow.getContentManager().addContent(content);
         toolWindow.getContentManager().addContent(content_stock);
         LogUtil.setProject(project);
@@ -46,35 +48,37 @@ public class FundWindow implements ToolWindowFactory {
 //                }
 //            }
 //        });
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-                fundRefreshHandler.refreshColorful(colorful);
-                fundRefreshHandler.handle(loadFunds());
-                stockWindow.onInit();
-                // 防止频繁点击，等待3秒
-                refreshButton.setEnabled(false);
-                new Thread(() -> {
-                    try {
-                        TimeUnit.SECONDS.sleep(3);
-                    } catch (InterruptedException ex) {
-                    }finally {
-                        refreshButton.setEnabled(true);
-                    }
-                }).start();
-            }
-        });
-
     }
 
     @Override
     public void init(ToolWindow window) {
-        boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-        fundRefreshHandler = new TianTianFundHandler(table1, refreshButton);
-        fundRefreshHandler.refreshColorful(colorful);
-        fundRefreshHandler.handle(loadFunds());
-        stockWindow.onInit();
+        JLabel refreshTimeLabel = new JLabel();
+        refreshTimeLabel.setToolTipText("最后刷新时间");
+        refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        JTable table = new JTable();
+        fundRefreshHandler = new TianTianFundHandler(table, refreshTimeLabel);
+        AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+                fundRefreshHandler.stopHandle();
+                this.setEnabled(false);
+            }
+        };
+        ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(table)
+                .addExtraAction(new AnActionButton("持续刷新当前表格数据", AllIcons.Actions.Refresh) {
+                    @Override
+                    public void actionPerformed(@NotNull AnActionEvent e) {
+                        apply();
+                        refreshAction.setEnabled(true);
+                    }
+                })
+                .addExtraAction(refreshAction)
+                .setToolbarPosition(ActionToolbarPosition.TOP);
+        JPanel toolPanel = toolbarDecorator.createPanel();
+        toolbarDecorator.getActionsPanel().add(refreshTimeLabel, BorderLayout.EAST);
+        toolPanel.setBorder(new EmptyBorder(0,0,0,0));
+        mPanel.add(toolPanel, BorderLayout.CENTER);
+        apply();
     }
 
     private static List<String> loadFunds(){
