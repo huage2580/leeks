@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 public abstract class FundRefreshHandler extends DefaultTableModel{
-    private static String[] columnNames = {"编码", "基金名称", "估算净值", "估算涨跌", "更新时间"};
+    private static String[] columnNames = {"编码", "基金名称", "当日净值", "估算净值", "估算涨跌", "更新时间"};
 
     private JTable table;
     private boolean colorful = true;
@@ -50,6 +50,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         };
         rowSorter.setComparator(2, dobleComparator);
         rowSorter.setComparator(3, dobleComparator);
+        rowSorter.setComparator(4, dobleComparator);
         table.setRowSorter(rowSorter);
         columnColors(colorful);
     }
@@ -60,6 +61,11 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
      * @param code
      */
     public abstract void handle(List<String> code);
+
+    /**
+     * 停止从网络更新数据
+     */
+    public abstract void stopHandle();
 
     private void columnColors(boolean colorful) {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
@@ -120,6 +126,19 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         // 通知listeners刷新ui
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
+
+    /**
+     * 参考源码{@link DefaultTableModel#removeRow(int)}，此为直接清除全部行，提高点效率
+     */
+    protected void clearRow() {
+        int size = dataVector.size();
+        if (0 < size) {
+            dataVector.clear();
+            // 通知listeners刷新ui
+            fireTableRowsDeleted(0, size - 1);
+        }
+    }
+
     /**
      * 查找列项中的valueName所在的行
      *
@@ -156,6 +175,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         Vector<Object> v = new Vector<Object>(columnNames.length);
         v.addElement(fundBean.getFundCode());
         v.addElement(colorful ? fundBean.getFundName() : PinYinUtils.toPinYin(fundBean.getFundName()));
+        v.addElement(fundBean.getDwjz());
         v.addElement(fundBean.getGsz());
         v.addElement( gszzlStr+"%");
         v.addElement(timeStr);

@@ -8,12 +8,9 @@ import javax.swing.*;
 
 public class SettingsWindow  implements Configurable {
     private JPanel panel1;
-    private JLabel label;
     private JTextField textField1;
     private JTextField textField2;
     private JCheckBox checkbox;
-
-    private String orgin;
 
     @Override
     public @Nls(capitalization = Nls.Capitalization.Title) String getDisplayName() {
@@ -22,9 +19,10 @@ public class SettingsWindow  implements Configurable {
 
     @Override
     public @Nullable JComponent createComponent() {
-        String value = PropertiesComponent.getInstance().getValue("key_funds");
-        String value_stock = PropertiesComponent.getInstance().getValue("key_stocks");
-        boolean value_color = PropertiesComponent.getInstance().getBoolean("key_colorful");
+        PropertiesComponent instance = PropertiesComponent.getInstance();
+        String value = instance.getValue("key_funds");
+        String value_stock = instance.getValue("key_stocks");
+        boolean value_color = instance.getBoolean("key_colorful");
         textField1.setText(value);
         textField2.setText(value_stock);
         checkbox.setSelected(!value_color);
@@ -38,9 +36,10 @@ public class SettingsWindow  implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        PropertiesComponent.getInstance().setValue("key_funds",textField1.getText());
-        PropertiesComponent.getInstance().setValue("key_stocks",textField2.getText());
-        PropertiesComponent.getInstance().setValue("key_colorful",!checkbox.isSelected());
+        PropertiesComponent instance = PropertiesComponent.getInstance();
+        instance.setValue("key_funds",textField1.getText());
+        instance.setValue("key_stocks",textField2.getText());
+        instance.setValue("key_colorful",!checkbox.isSelected());
         StockWindow.apply();
         FundWindow.apply();
     }

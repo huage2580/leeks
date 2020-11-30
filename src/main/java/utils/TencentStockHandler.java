@@ -8,31 +8,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TencentStockHandler extends StockRefreshHandler {
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm ss");
-
     private String urlPara;
 
     private Thread worker;
-    private JLabel label;
+    private JLabel refreshTimeLabel;
 
     public TencentStockHandler(JTable table) {
         super(table);
     }
 
-    public TencentStockHandler(JTable table1, JLabel label) {
+    public TencentStockHandler(JTable table1, JLabel refreshTimeLabel) {
         super(table1);
-        this.label = label;
+        this.refreshTimeLabel = refreshTimeLabel;
     }
 
     @Override
     public void handle(List<String> code) {
 
-        LogUtil.info("Leeks 更新股票编码数据.");
-        if (code.isEmpty()){
-            return;
-        }
         if (worker!=null){
             worker.interrupt();
+        }
+        LogUtil.info("Leeks 更新股票编码数据.");
+        clearRow();
+        if (code.isEmpty()){
+            return;
         }
         worker = new Thread(new Runnable() {
             @Override
@@ -42,7 +41,9 @@ public class TencentStockHandler extends StockRefreshHandler {
                     try {
                         Thread.sleep(10 * 1000);
                     } catch (InterruptedException e) {
-                        //移除了中断线程的警告
+                        LogUtil.info("Leeks 已停止更新股票编码数据.");
+                        refreshTimeLabel.setText("stop");
+                        return;
                     }
                 }
             }
@@ -50,6 +51,14 @@ public class TencentStockHandler extends StockRefreshHandler {
         urlPara = String.join(",", code);
         worker.start();
 
+    }
+
+    @Override
+    public void stopHandle() {
+        if (worker != null) {
+            worker.interrupt();
+            LogUtil.info("Leeks 准备停止更新股票编码数据.");
+        }
     }
 
     private void stepAction() {
@@ -96,7 +105,7 @@ public class TencentStockHandler extends StockRefreshHandler {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                label.setText("最后刷新时间: "+ LocalDateTime.now().format(TianTianFundHandler.timeFormatter));
+                refreshTimeLabel.setText(LocalDateTime.now().format(TianTianFundHandler.timeFormatter));
             }
         });
     }

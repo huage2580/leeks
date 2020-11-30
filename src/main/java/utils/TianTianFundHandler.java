@@ -9,23 +9,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TianTianFundHandler extends FundRefreshHandler {
-    public static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+    public final static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static Gson gson = new Gson();
     private final List<String> codes = new ArrayList<>();
 
     private Thread worker;
-    private JButton refreshButton;
-    public TianTianFundHandler(JTable table, JButton refreshButton) {
+    private JLabel refreshTimeLabel;
+    public TianTianFundHandler(JTable table, JLabel refreshTimeLabel) {
         super(table);
-        this.refreshButton = refreshButton;
+        this.refreshTimeLabel = refreshTimeLabel;
     }
 
     @Override
     public void handle(List<String> code) {
-        LogUtil.info("Leeks 更新基金编码数据.");
         if (worker!=null){
             worker.interrupt();
         }
+        LogUtil.info("Leeks 更新基金编码数据.");
+        clearRow();
         if (code.isEmpty()){
             return;
         }
@@ -39,8 +40,9 @@ public class TianTianFundHandler extends FundRefreshHandler {
                     try {
                         Thread.sleep(60 * 1000);
                     } catch (InterruptedException e) {
-                        //e.printStackTrace();
-                        //移除了中断线程的警告
+                        LogUtil.info("Leeks 已停止更新基金编码数据.");
+                        refreshTimeLabel.setText("stop");
+                        return;
                     }
                 }
             }
@@ -50,6 +52,14 @@ public class TianTianFundHandler extends FundRefreshHandler {
             codes.addAll(code);
         }
         worker.start();
+    }
+
+    @Override
+    public void stopHandle() {
+        if (worker != null) {
+            worker.interrupt();
+            LogUtil.info("Leeks 准备停止更新基金编码数据.");
+        }
     }
 
     private void stepAction(){
@@ -79,7 +89,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                refreshButton.setText("最后刷新时间: "+ LocalDateTime.now().format(timeFormatter));
+                refreshTimeLabel.setText(LocalDateTime.now().format(timeFormatter));
             }
         });
     }
