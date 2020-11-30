@@ -29,7 +29,7 @@ public class TencentStockHandler extends StockRefreshHandler {
             worker.interrupt();
         }
         LogUtil.info("Leeks 更新股票编码数据.");
-        clearRow();
+//        clearRow();
         if (code.isEmpty()){
             return;
         }

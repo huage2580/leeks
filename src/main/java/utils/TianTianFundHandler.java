@@ -26,10 +26,11 @@ public class TianTianFundHandler extends FundRefreshHandler {
             worker.interrupt();
         }
         LogUtil.info("Leeks 更新基金编码数据.");
-        clearRow();
+
         if (code.isEmpty()){
             return;
         }
+
         worker = new Thread(new Runnable() {
             @Override
             public void run() {

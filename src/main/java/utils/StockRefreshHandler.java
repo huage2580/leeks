@@ -61,6 +61,12 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
      */
     public abstract void handle(List<String> code);
 
+    public void setupTable(List<String> code){
+        for (String s : code) {
+            updateData(new StockBean(s));
+        }
+    }
+
     /**
      * 停止从网络更新数据
      */
@@ -101,7 +107,13 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     }
 
     protected void updateData(StockBean bean) {
+        if (bean.getCode() == null){
+            return;
+        }
         Vector<Object> convertData = convertData(bean);
+        if (convertData == null){
+            return;
+        }
         // 获取行
         int index = findRowIndex(0, bean.getCode());
         if (index >= 0) {
@@ -126,7 +138,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     /**
      * 参考源码{@link DefaultTableModel#removeRow(int)}，此为直接清除全部行，提高点效率
      */
-    protected void clearRow() {
+    public void clearRow() {
         int size = dataVector.size();
         if (0 < size) {
             dataVector.clear();
@@ -154,7 +166,13 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     }
 
     private Vector<Object> convertData(StockBean fundBean) {
-        String timeStr = fundBean.getTime().substring(8);
+        if (fundBean == null){
+            return null;
+        }
+        String timeStr = "--";
+        if (fundBean.getTime()!=null){
+            timeStr = fundBean.getTime().substring(8);
+        }
         String changeStr = "--";
         String changePercentStr = "--";
         if (fundBean.getChange()!=null){

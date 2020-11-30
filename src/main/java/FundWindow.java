@@ -18,10 +18,8 @@ import utils.TianTianFundHandler;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 public class FundWindow implements ToolWindowFactory {
     private JPanel mPanel;
@@ -68,7 +66,7 @@ public class FundWindow implements ToolWindowFactory {
                 .addExtraAction(new AnActionButton("持续刷新当前表格数据", AllIcons.Actions.Refresh) {
                     @Override
                     public void actionPerformed(@NotNull AnActionEvent e) {
-                        apply();
+                        refresh();
                         refreshAction.setEnabled(true);
                     }
                 })
@@ -90,7 +88,7 @@ public class FundWindow implements ToolWindowFactory {
         if (StringUtils.isEmpty(value)) {
             return new ArrayList<>();
         }
-        Set<String> set = new HashSet<>();
+        Set<String> set = new LinkedHashSet<>();
         String[] codes = value.split(split);
         for (String code : codes) {
             if (!code.isEmpty()) {
@@ -112,6 +110,16 @@ public class FundWindow implements ToolWindowFactory {
     }
 
     public static void apply() {
+        if (fundRefreshHandler != null) {
+            boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
+            fundRefreshHandler.refreshColorful(colorful);
+            fundRefreshHandler.clearRow();
+            fundRefreshHandler.setupTable(loadFunds());
+            fundRefreshHandler.handle(loadFunds());
+        }
+    }
+
+    public static void refresh() {
         if (fundRefreshHandler != null) {
             boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
             fundRefreshHandler.refreshColorful(colorful);

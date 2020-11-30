@@ -39,7 +39,7 @@ public class StockWindow {
                 .addExtraAction(new AnActionButton("持续刷新当前表格数据", AllIcons.Actions.Refresh) {
                     @Override
                     public void actionPerformed(@NotNull AnActionEvent e) {
-                        apply();
+                        refresh();
                         refreshAction.setEnabled(true);
                     }
                 })
@@ -54,6 +54,15 @@ public class StockWindow {
     }
 
     public static void apply() {
+        if (handler != null) {
+            boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
+            handler.refreshColorful(colorful);
+            handler.clearRow();
+            handler.setupTable(loadStocks());
+            handler.handle(loadStocks());
+        }
+    }
+    public static void refresh() {
         if (handler != null) {
             boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
             handler.refreshColorful(colorful);
