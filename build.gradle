@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.huage2580'
-version '1.6.1'
+version '1.6.2'
 
 sourceCompatibility = 1.8
 
@@ -20,7 +20,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2020.1.3'
+//    version '2020.1.3'
     intellij.updateSinceUntilBuild true
     intellij.sameSinceUntilBuild false
 }
@@ -34,7 +34,7 @@ patchPluginXml {
         v1.6 样式修改，增加精确净值（当日，上一交易日
       """
     sinceBuild '173.*'
-    untilBuild '202.*'
+    untilBuild '203.*'
 }
 
 tasks.withType(JavaCompile) {
