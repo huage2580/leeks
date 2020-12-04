@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 public abstract class FundRefreshHandler extends DefaultTableModel{
-    private static String[] columnNames = {"编码", "基金名称", "当日净值", "估算净值", "估算涨跌", "更新时间"};
+    private static String[] columnNames = {"编码", "基金名称", "估算净值", "估算涨跌", "更新时间", "当日净值"};
 
     private JTable table;
     private boolean colorful = true;
@@ -43,14 +43,13 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
             setColumnIdentifiers(PinYinUtils.toPinYin(columnNames));
         }
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(this);
-        Comparator<Object> dobleComparator = (o1, o2) -> {
+        Comparator<Object> doubleComparator = (o1, o2) -> {
             Double v1 = Double.parseDouble(StringUtils.remove((String) o1, '%'));
             Double v2 = Double.parseDouble(StringUtils.remove((String) o2, '%'));
             return v1.compareTo(v2);
         };
-        rowSorter.setComparator(2, dobleComparator);
-        rowSorter.setComparator(3, dobleComparator);
-        rowSorter.setComparator(4, dobleComparator);
+        rowSorter.setComparator(2, doubleComparator);
+        rowSorter.setComparator(3, doubleComparator);
         table.setRowSorter(rowSorter);
         columnColors(colorful);
     }
@@ -61,6 +60,17 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
      * @param code
      */
     public abstract void handle(List<String> code);
+
+
+    /**
+     * 按照编码顺序初始化，for 每次刷新都乱序，没办法控制显示顺序
+     * @param code
+     */
+    public void setupTable(List<String> code){
+        for (String s : code) {
+            updateData(new FundBean(s));
+        }
+    }
 
     /**
      * 停止从网络更新数据
@@ -73,7 +83,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 double temp = 0.0;
                 try {
-                    String s = value.toString().substring(0,value.toString().length()-1);
+                    String s = StringUtils.remove(value.toString(), '%');
                     temp = Double.parseDouble(s);
                 } catch (Exception e) {
 
@@ -97,11 +107,14 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
+//        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
         table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(FundBean bean) {
+        if (bean.getFundCode() == null){
+            return;
+        }
         Vector<Object> convertData = convertData(bean);
         if (convertData==null){
             return;
@@ -130,7 +143,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
     /**
      * 参考源码{@link DefaultTableModel#removeRow(int)}，此为直接清除全部行，提高点效率
      */
-    protected void clearRow() {
+    public void clearRow() {
         int size = dataVector.size();
         if (0 < size) {
             dataVector.clear();
@@ -158,9 +171,12 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
     }
 
     private Vector<Object> convertData(FundBean fundBean) {
+        if (fundBean.getFundCode() == null){
+            return null;
+        }
         String timeStr = fundBean.getGztime();
         if(timeStr == null){
-            return null;
+            timeStr = "--";
         }
         String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
         if (timeStr.startsWith(today)) {
@@ -175,10 +191,10 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         Vector<Object> v = new Vector<Object>(columnNames.length);
         v.addElement(fundBean.getFundCode());
         v.addElement(colorful ? fundBean.getFundName() : PinYinUtils.toPinYin(fundBean.getFundName()));
-        v.addElement(fundBean.getDwjz());
         v.addElement(fundBean.getGsz());
         v.addElement( gszzlStr+"%");
         v.addElement(timeStr);
+        v.addElement(fundBean.getDwjz()+"["+fundBean.getJzrq()+"]");
         return v;
     }
 

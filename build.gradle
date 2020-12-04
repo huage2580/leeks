@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.huage2580'
-version '1.5.2'
+version '1.6.2'
 
 sourceCompatibility = 1.8
 
@@ -20,7 +20,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2020.1.3'
+//    version '2020.1.3'
     intellij.updateSinceUntilBuild true
     intellij.sameSinceUntilBuild false
 }
@@ -31,9 +31,10 @@ patchPluginXml {
         v1.3   支持了IDEA 2020.1.3,兼容到`IDEA 2017.3`，修复macOS 行高问题（不确定 <br>
         v1.4 增加了隐蔽模式（全拼音和无色涨跌幅
         v1.5 增加了股票界面的排序~，可按净值和涨跌幅等列排序
+        v1.6 样式修改，增加精确净值（当日，上一交易日
       """
     sinceBuild '173.*'
-    untilBuild '202.*'
+    untilBuild '203.*'
 }
 
 tasks.withType(JavaCompile) {
