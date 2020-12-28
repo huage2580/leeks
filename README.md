@@ -35,5 +35,7 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 样式和bug fix,(样式调整，增加当日净值merge from [dengerYang](https://github.com/dengerYang) )      
 - v1.6.2
 适配IDEA 2020.3  
+- v1.6.3  
+修复颜色错乱问题
 
 
