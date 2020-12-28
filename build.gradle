@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.huage2580'
-version '1.6.2'
+version '1.6.3'
 
 sourceCompatibility = 1.8
 
@@ -40,3 +40,4 @@ patchPluginXml {
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
+buildSearchableOptions.enabled = false
