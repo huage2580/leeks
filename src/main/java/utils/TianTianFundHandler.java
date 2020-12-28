@@ -25,7 +25,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
         if (worker!=null){
             worker.interrupt();
         }
-        LogUtil.info("Leeks 更新基金编码数据.");
+        LogUtil.info("Leeks 更新Fund编码数据.");
 
         if (code.isEmpty()){
             return;
@@ -41,7 +41,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
                     try {
                         Thread.sleep(60 * 1000);
                     } catch (InterruptedException e) {
-                        LogUtil.info("Leeks 已停止更新基金编码数据.");
+                        LogUtil.info("Leeks 已停止更新Fund编码数据.");
                         refreshTimeLabel.setText("stop");
                         return;
                     }
@@ -59,7 +59,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
     public void stopHandle() {
         if (worker != null) {
             worker.interrupt();
-            LogUtil.info("Leeks 准备停止更新基金编码数据.");
+            LogUtil.info("Leeks 准备停止更新Fund编码数据.");
         }
     }
 
@@ -76,7 +76,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
                             FundBean bean = gson.fromJson(json,FundBean.class);
                             updateData(bean);
                         }else {
-                            LogUtil.info("基金编码:["+s+"]无法获取数据");
+                            LogUtil.info("Fund编码:["+s+"]无法获取数据");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

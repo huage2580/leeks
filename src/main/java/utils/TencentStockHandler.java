@@ -28,7 +28,7 @@ public class TencentStockHandler extends StockRefreshHandler {
         if (worker!=null){
             worker.interrupt();
         }
-        LogUtil.info("Leeks 更新股票编码数据.");
+        LogUtil.info("Leeks 更新Stock编码数据.");
 //        clearRow();
         if (code.isEmpty()){
             return;
@@ -41,7 +41,7 @@ public class TencentStockHandler extends StockRefreshHandler {
                     try {
                         Thread.sleep(10 * 1000);
                     } catch (InterruptedException e) {
-                        LogUtil.info("Leeks 已停止更新股票编码数据.");
+                        LogUtil.info("Leeks 已停止更新Stock编码数据.");
                         refreshTimeLabel.setText("stop");
                         return;
                     }
@@ -57,7 +57,7 @@ public class TencentStockHandler extends StockRefreshHandler {
     public void stopHandle() {
         if (worker != null) {
             worker.interrupt();
-            LogUtil.info("Leeks 准备停止更新股票编码数据.");
+            LogUtil.info("Leeks 准备停止更新Stock编码数据.");
         }
     }
 
