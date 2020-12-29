@@ -1,87 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="SettingsWindow">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FormLayout">
-    <rowspec value="center:d:noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
-    <colspec value="fill:d:noGrow"/>
-    <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:d:grow"/>
+    <colspec value="left:183px:noGrow"/>
+    <colspec value="left:13dlu:noGrow"/>
+    <colspec value="left:d:grow"/>
     <constraints>
-      <xy x="20" y="20" width="512" height="400"/>
+      <xy x="20" y="20" width="1004" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <component id="bf47d" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <font size="14"/>
-          <text value="输入基金编码，英文逗号分隔："/>
-        </properties>
-      </component>
-      <component id="13115" class="javax.swing.JTextField" binding="textField1" default-binding="true">
-        <constraints>
-          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="f57a1" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <font size="14"/>
-          <text value="输出股票编码，逗号分隔："/>
-        </properties>
-      </component>
-      <component id="adb96" class="javax.swing.JTextField" binding="textField2" default-binding="true">
-        <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
-      </component>
       <component id="fc227" class="javax.swing.JCheckBox" binding="checkbox">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties>
           <horizontalAlignment value="2"/>
           <horizontalTextPosition value="2"/>
           <text value="超隐蔽模式"/>
+          <toolTipText value="采取全拼音显示，无色文本"/>
         </properties>
       </component>
-      <component id="a83e3" class="javax.swing.JLabel">
+      <component id="ed221" class="javax.swing.JCheckBox" binding="checkBoxTableStriped">
         <constraints>
-          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties>
-          <text value="（采取全拼音显示，无色文本）"/>
+          <horizontalAlignment value="2"/>
+          <horizontalTextPosition value="2"/>
+          <text value="表格条纹（斑马线）"/>
         </properties>
       </component>
+      <tabbedpane id="e57b" binding="tabbedPane1" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="200" height="200"/>
+          </grid>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="522ba" layout-manager="FormLayout">
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:d:grow"/>
+            <colspec value="left:0px:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <tabbedpane title="Fund">
+                <tooltip value="基金"/>
+              </tabbedpane>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="bf47d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <font size="14"/>
+                  <text value="基金编码，英文逗号分隔："/>
+                </properties>
+              </component>
+              <scrollpane id="f10a8">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="732f5" class="javax.swing.JTextArea" binding="textAreaFund">
+                    <constraints/>
+                    <properties>
+                      <lineWrap value="true"/>
+                      <minimumSize width="370" height="17"/>
+                      <preferredSize width="370" height="85"/>
+                      <rows value="5"/>
+                      <text value=""/>
+                      <toolTipText value="基金编码，英文逗号分隔"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="304f" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <text value="持续刷新间隔时间（秒）："/>
+                  <toolTipText value="最小值=1"/>
+                </properties>
+              </component>
+              <component id="f0ef0" class="javax.swing.JSpinner" binding="spinnerFund">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <grid id="c8ca2" layout-manager="FormLayout">
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:d:grow"/>
+            <colspec value="left:0px:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <tabbedpane title="Stock">
+                <tooltip value="股票"/>
+              </tabbedpane>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="f57a1" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <font size="14"/>
+                  <text value="股票编码，英文逗号分隔："/>
+                </properties>
+              </component>
+              <scrollpane id="e0430">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="1567c" class="javax.swing.JTextArea" binding="textAreaStock">
+                    <constraints/>
+                    <properties>
+                      <lineWrap value="true"/>
+                      <minimumSize width="370" height="17"/>
+                      <preferredSize width="370" height="85"/>
+                      <rows value="5"/>
+                      <toolTipText value="股票编码，英文逗号分隔，例如：【sh000001,sh600519,sz000001,hk00700,usAAPL】"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="41bb0" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="持续刷新间隔时间（秒）："/>
+                </properties>
+              </component>
+              <component id="44786" class="javax.swing.JSpinner" binding="spinnerStock">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </tabbedpane>
       <component id="8c26" class="javax.swing.JLabel">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
-          <text value="小韭菜 V1.5.2"/>
+          <text value="小韭菜 V1.6.4"/>
         </properties>
       </component>
     </children>
