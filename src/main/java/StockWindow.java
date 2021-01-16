@@ -29,7 +29,7 @@ public class StockWindow {
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         JTable table = new JTable();
 //        handler = new TencentStockHandler(table, refreshTimeLabel);
-        handler = new SinaStockHandler(table);
+        handler = new SinaStockHandler(table, refreshTimeLabel);
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
