@@ -6,6 +6,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
+import utils.SinaStockHandler;
 import utils.StockRefreshHandler;
 import utils.TencentStockHandler;
 
@@ -27,8 +28,10 @@ public class StockWindow {
         JLabel refreshTimeLabel = new JLabel();
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+
         JBTable table = new JBTable();
         handler = new TencentStockHandler(table, refreshTimeLabel);
+
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
