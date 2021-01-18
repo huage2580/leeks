@@ -22,9 +22,7 @@ public class SinaStockHandler extends StockRefreshHandler {
     private static final Pattern DEFAULT_STOCK_PATTERN = Pattern.compile("var hq_str_(\\w+?)=\"(.*?)\";");
     private final JLabel refreshTimeLabel;
 
-    private static final ScheduledExecutorService mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
-    private volatile boolean working = true;
-    private volatile boolean started = false;
+    private static ScheduledExecutorService mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
 
     public SinaStockHandler(JTable table, JLabel label) {
         super(table);
@@ -41,21 +39,15 @@ public class SinaStockHandler extends StockRefreshHandler {
     }
 
     public void useScheduleThreadExecutor(List<String> code) {
-        if (!started) {
-            mSchedulerExecutor.scheduleAtFixedRate(getWork(code), 0, 1, TimeUnit.SECONDS);
-            started = true;
-            LogUtil.info("stock 定时线程池 init success");
+        if (mSchedulerExecutor.isShutdown()){
+            mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
         }
-        working = true;
-        System.out.println("working = " + working);
-        LogUtil.info("stock 定时线程池 start success");
+        mSchedulerExecutor.scheduleAtFixedRate(getWork(code), 0, threadSleepTime, TimeUnit.SECONDS);
     }
 
     private Runnable getWork(List<String> code) {
         return () -> {
-            if (working) {
-                pollStock(code);
-            }
+            pollStock(code);
         };
     }
 
@@ -63,8 +55,8 @@ public class SinaStockHandler extends StockRefreshHandler {
         String params = Joiner.on(",").join(code);
         try {
             String res = HttpClientPool.getHttpClient().get(URL + params);
-            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));
-            System.out.printf("%s,%s%n", time, res);
+//            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));
+//            System.out.printf("%s,%s%n", time, res);
             handleResponse(res);
         } catch (Exception e) {
             LogUtil.info(e.getMessage());
@@ -80,7 +72,7 @@ public class SinaStockHandler extends StockRefreshHandler {
             }
             String code = matcher.group(1);
             String[] split = matcher.group(2).split(",");
-            if (split == null || split.length < 32) {
+            if (split.length < 32) {
                 continue;
             }
             StockBean bean = new StockBean(code);
@@ -109,7 +101,7 @@ public class SinaStockHandler extends StockRefreshHandler {
 
     @Override
     public void stopHandle() {
-        working = false;
+        mSchedulerExecutor.shutdown();
         LogUtil.info("leeks stock 自动刷新关闭!");
     }
 }

@@ -18,6 +18,8 @@ public class SettingsWindow  implements Configurable {
     private JCheckBox checkBoxTableStriped;
     private JSpinner spinnerFund;
     private JSpinner spinnerStock;
+    private JCheckBox checkboxSina;
+    private JCheckBox checkboxLog;
 
     @Override
     public @Nls(capitalization = Nls.Capitalization.Title) String getDisplayName() {
@@ -34,6 +36,8 @@ public class SettingsWindow  implements Configurable {
         textAreaStock.setText(value_stock);
         checkbox.setSelected(!value_color);
         checkBoxTableStriped.setSelected(instance.getBoolean("key_table_striped"));
+        checkboxSina.setSelected(instance.getBoolean("key_stocks_sina"));
+        checkboxLog.setSelected(instance.getBoolean("key_close_log"));
         spinnerFund.setModel(new SpinnerNumberModel(instance.getInt("key_funds_thread_time", 60), 1, Integer.MAX_VALUE, 1));
         spinnerStock.setModel(new SpinnerNumberModel(instance.getInt("key_stocks_thread_time", 10), 1, Integer.MAX_VALUE, 1));
         return panel1;
@@ -53,6 +57,8 @@ public class SettingsWindow  implements Configurable {
         instance.setValue("key_funds_thread_time", spinnerFund.getValue().toString());
         instance.setValue("key_stocks_thread_time", spinnerStock.getValue().toString());
         instance.setValue("key_table_striped", checkBoxTableStriped.isSelected());
+        instance.setValue("key_stocks_sina",checkboxSina.isSelected());
+        instance.setValue("key_close_log",checkboxLog.isSelected());
         StockWindow.apply();
         FundWindow.apply();
     }

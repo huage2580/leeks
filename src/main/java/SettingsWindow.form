@@ -6,9 +6,11 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
-    <colspec value="left:183px:noGrow"/>
+    <colspec value="left:119px:noGrow"/>
     <colspec value="left:13dlu:noGrow"/>
     <colspec value="left:d:grow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(d;4px):noGrow"/>
     <constraints>
       <xy x="20" y="20" width="1004" height="400"/>
     </constraints>
@@ -27,20 +29,9 @@
           <toolTipText value="采取全拼音显示，无色文本"/>
         </properties>
       </component>
-      <component id="ed221" class="javax.swing.JCheckBox" binding="checkBoxTableStriped">
-        <constraints>
-          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false" defaultalign-vert="false"/>
-        </constraints>
-        <properties>
-          <horizontalAlignment value="2"/>
-          <horizontalTextPosition value="2"/>
-          <text value="表格条纹（斑马线）"/>
-        </properties>
-      </component>
       <tabbedpane id="e57b" binding="tabbedPane1" default-binding="true">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
           </grid>
           <forms/>
@@ -88,7 +79,7 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="85"/>
+                      <preferredSize width="370" height="95"/>
                       <rows value="5"/>
                       <text value=""/>
                       <toolTipText value="基金编码，英文逗号分隔"/>
@@ -156,7 +147,7 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="85"/>
+                      <preferredSize width="370" height="95"/>
                       <rows value="5"/>
                       <toolTipText value="股票编码，英文逗号分隔，例如：【sh000001,sh600519,sz000001,hk00700,usAAPL】"/>
                     </properties>
@@ -192,9 +183,43 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="小韭菜 V1.6.4"/>
+          <text value="小韭菜 V1.7.1"/>
         </properties>
       </component>
+      <grid id="b17a5" layout-manager="FlowLayout" hgap="30" vgap="5" flow-align="0">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false" defaultalign-vert="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="ed221" class="javax.swing.JCheckBox" binding="checkBoxTableStriped">
+            <constraints/>
+            <properties>
+              <horizontalAlignment value="2"/>
+              <horizontalTextPosition value="2"/>
+              <text value="表格条纹（斑马线）"/>
+            </properties>
+          </component>
+          <component id="8c514" class="javax.swing.JCheckBox" binding="checkboxSina">
+            <constraints/>
+            <properties>
+              <horizontalAlignment value="2"/>
+              <horizontalTextPosition value="2"/>
+              <text value="采用新浪股票接口(无港股美股数据)"/>
+            </properties>
+          </component>
+          <component id="3e6da" class="javax.swing.JCheckBox" binding="checkboxLog">
+            <constraints/>
+            <properties>
+              <horizontalAlignment value="2"/>
+              <horizontalTextPosition value="2"/>
+              <text value="关闭日志"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>

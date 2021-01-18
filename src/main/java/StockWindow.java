@@ -18,19 +18,26 @@ import java.util.List;
 public class StockWindow {
     private JPanel mPanel;
 
-    static TencentStockHandler handler;
+    static StockRefreshHandler handler;
+
+    static JBTable table;
+    static JLabel refreshTimeLabel;
 
     public JPanel getmPanel() {
         return mPanel;
     }
 
-    public StockWindow() {
-        JLabel refreshTimeLabel = new JLabel();
+    static {
+        refreshTimeLabel = new JLabel();
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        table = new JBTable();
+    }
 
-        JBTable table = new JBTable();
-        handler = new TencentStockHandler(table, refreshTimeLabel);
+    public StockWindow() {
+
+        //切换接口
+        handler = factoryHandler();
 
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
             @Override
@@ -57,8 +64,29 @@ public class StockWindow {
         apply();
     }
 
+    private static StockRefreshHandler factoryHandler(){
+        boolean useSinaApi = PropertiesComponent.getInstance().getBoolean("key_stocks_sina");
+        if (useSinaApi){
+            if (handler instanceof SinaStockHandler){
+                return handler;
+            }
+            if (handler!=null){
+                handler.stopHandle();
+            }
+            return new SinaStockHandler(table, refreshTimeLabel);
+        }
+        if (handler instanceof TencentStockHandler){
+            return handler;
+        }
+        if (handler!=null){
+            handler.stopHandle();
+        }
+        return  new TencentStockHandler(table, refreshTimeLabel);
+    }
+
     public static void apply() {
         if (handler != null) {
+            handler = factoryHandler();
             PropertiesComponent instance = PropertiesComponent.getInstance();
             handler.setStriped(instance.getBoolean("key_table_striped"));
             handler.setThreadSleepTime(instance.getInt("key_stocks_thread_time", handler.getThreadSleepTime()));
