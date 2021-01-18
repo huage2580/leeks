@@ -9,6 +9,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import utils.FundRefreshHandler;
@@ -24,7 +25,7 @@ import java.util.List;
 public class FundWindow implements ToolWindowFactory {
     private JPanel mPanel;
 
-    static FundRefreshHandler fundRefreshHandler;
+    static TianTianFundHandler fundRefreshHandler;
 
     private StockWindow stockWindow = new StockWindow();
 
@@ -53,7 +54,7 @@ public class FundWindow implements ToolWindowFactory {
         JLabel refreshTimeLabel = new JLabel();
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
-        JTable table = new JTable();
+        JBTable table = new JBTable();
         fundRefreshHandler = new TianTianFundHandler(table, refreshTimeLabel);
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
             @Override
@@ -111,8 +112,10 @@ public class FundWindow implements ToolWindowFactory {
 
     public static void apply() {
         if (fundRefreshHandler != null) {
-            boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-            fundRefreshHandler.refreshColorful(colorful);
+            PropertiesComponent instance = PropertiesComponent.getInstance();
+            fundRefreshHandler.setStriped(instance.getBoolean("key_table_striped"));
+            fundRefreshHandler.setThreadSleepTime(instance.getInt("key_funds_thread_time", fundRefreshHandler.getThreadSleepTime()));
+            fundRefreshHandler.refreshColorful(instance.getBoolean("key_colorful"));
             fundRefreshHandler.clearRow();
             fundRefreshHandler.setupTable(loadFunds());
             fundRefreshHandler.handle(loadFunds());

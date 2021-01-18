@@ -12,10 +12,10 @@ public class TencentStockHandler extends StockRefreshHandler {
 
     private Thread worker;
     private JLabel refreshTimeLabel;
-
-    public TencentStockHandler(JTable table) {
-        super(table);
-    }
+    /**
+     * 更新数据的间隔时间（秒）
+     */
+    private volatile int threadSleepTime = 10;
 
     public TencentStockHandler(JTable table1, JLabel refreshTimeLabel) {
         super(table1);
@@ -39,7 +39,7 @@ public class TencentStockHandler extends StockRefreshHandler {
                 while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()){
                     stepAction();
                     try {
-                        Thread.sleep(10 * 1000);
+                        Thread.sleep(threadSleepTime * 1000);
                     } catch (InterruptedException e) {
                         LogUtil.info("Leeks 已停止更新Stock编码数据.");
                         refreshTimeLabel.setText("stop");
@@ -106,7 +106,16 @@ public class TencentStockHandler extends StockRefreshHandler {
             @Override
             public void run() {
                 refreshTimeLabel.setText(LocalDateTime.now().format(TianTianFundHandler.timeFormatter));
+                refreshTimeLabel.setToolTipText("最后刷新时间，刷新间隔" + threadSleepTime + "秒");
             }
         });
+    }
+
+    public int getThreadSleepTime() {
+        return threadSleepTime;
+    }
+
+    public void setThreadSleepTime(int threadSleepTime) {
+        this.threadSleepTime = threadSleepTime;
     }
 }

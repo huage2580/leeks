@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
 import utils.SinaStockHandler;
 import utils.StockRefreshHandler;
@@ -17,7 +18,7 @@ import java.util.List;
 public class StockWindow {
     private JPanel mPanel;
 
-    static StockRefreshHandler handler;
+    static TencentStockHandler handler;
 
     public JPanel getmPanel() {
         return mPanel;
@@ -27,9 +28,10 @@ public class StockWindow {
         JLabel refreshTimeLabel = new JLabel();
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
-        JTable table = new JTable();
-//        handler = new TencentStockHandler(table, refreshTimeLabel);
-        handler = new SinaStockHandler(table, refreshTimeLabel);
+
+        JBTable table = new JBTable();
+        handler = new TencentStockHandler(table, refreshTimeLabel);
+
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
@@ -57,8 +59,10 @@ public class StockWindow {
 
     public static void apply() {
         if (handler != null) {
-            boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-            handler.refreshColorful(colorful);
+            PropertiesComponent instance = PropertiesComponent.getInstance();
+            handler.setStriped(instance.getBoolean("key_table_striped"));
+            handler.setThreadSleepTime(instance.getInt("key_stocks_thread_time", handler.getThreadSleepTime()));
+            handler.refreshColorful(instance.getBoolean("key_colorful"));
             handler.clearRow();
             handler.setupTable(loadStocks());
             handler.handle(loadStocks());

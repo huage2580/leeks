@@ -1,6 +1,7 @@
 package utils;
 
 import com.intellij.ui.JBColor;
+import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -60,6 +61,20 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
      * @param code
      */
     public abstract void handle(List<String> code);
+
+    /**
+     * 设置表格条纹（斑马线）<br>
+     *
+     * @param striped true设置条纹
+     * @throws RuntimeException 如果table不是{@link JBTable}类型，请自行实现setStriped
+     */
+    public void setStriped(boolean striped) {
+        if (table instanceof JBTable) {
+            ((JBTable) table).setStriped(striped);
+        } else {
+            throw new RuntimeException("table不是JBTable类型，请自行实现setStriped");
+        }
+    }
 
     public void setupTable(List<String> code){
         for (String s : code) {
