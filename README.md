@@ -36,6 +36,9 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 - v1.6.2
 适配IDEA 2020.3  
 - v1.6.3  
-修复颜色错乱问题
+修复颜色错乱问题 , 日志调整 merge from [qwn3213](https://github.com/qwn3213)  
+- v1.7.1
+增加日志开关 ,设置界面样式调整 merge from [dengerYang](https://github.com/dengerYang) ，增加新浪股票接口备选 merge from [JulianXG](https://github.com/JulianXG)
+
 
 

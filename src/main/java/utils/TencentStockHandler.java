@@ -12,10 +12,7 @@ public class TencentStockHandler extends StockRefreshHandler {
 
     private Thread worker;
     private JLabel refreshTimeLabel;
-    /**
-     * 更新数据的间隔时间（秒）
-     */
-    private volatile int threadSleepTime = 10;
+
 
     public TencentStockHandler(JTable table1, JLabel refreshTimeLabel) {
         super(table1);
@@ -111,11 +108,5 @@ public class TencentStockHandler extends StockRefreshHandler {
         });
     }
 
-    public int getThreadSleepTime() {
-        return threadSleepTime;
-    }
 
-    public void setThreadSleepTime(int threadSleepTime) {
-        this.threadSleepTime = threadSleepTime;
-    }
 }

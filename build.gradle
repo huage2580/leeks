@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.huage2580'
-version '1.6.3'
+version '1.7.1'
 
 sourceCompatibility = 1.8
 
@@ -32,6 +32,7 @@ patchPluginXml {
         v1.4 增加了隐蔽模式（全拼音和无色涨跌幅
         v1.5 增加了股票界面的排序~，可按净值和涨跌幅等列排序
         v1.6 样式修改，增加精确净值（当日，上一交易日
+        v1.7 设置界面样式调整，增加新浪股票接口备选
       """
     sinceBuild '173.*'
     untilBuild '203.*'

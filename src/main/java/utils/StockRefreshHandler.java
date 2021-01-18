@@ -19,6 +19,11 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     private JTable table;
     private boolean colorful = true;
 
+    /**
+     * 更新数据的间隔时间（秒）
+     */
+    protected volatile int threadSleepTime = 10;
+
     public StockRefreshHandler(JTable table) {
         this.table = table;
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -212,5 +217,13 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int column) {
         return false;
+    }
+
+    public int getThreadSleepTime() {
+        return threadSleepTime;
+    }
+
+    public void setThreadSleepTime(int threadSleepTime) {
+        this.threadSleepTime = threadSleepTime;
     }
 }
