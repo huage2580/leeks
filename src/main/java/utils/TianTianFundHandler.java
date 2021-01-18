@@ -15,6 +15,11 @@ public class TianTianFundHandler extends FundRefreshHandler {
 
     private Thread worker;
     private JLabel refreshTimeLabel;
+    /**
+     * 更新数据的间隔时间（秒）
+     */
+    private volatile int threadSleepTime = 60;
+
     public TianTianFundHandler(JTable table, JLabel refreshTimeLabel) {
         super(table);
         this.refreshTimeLabel = refreshTimeLabel;
@@ -39,7 +44,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
                         stepAction();
                     }
                     try {
-                        Thread.sleep(60 * 1000);
+                        Thread.sleep(threadSleepTime * 1000);
                     } catch (InterruptedException e) {
                         LogUtil.info("Leeks 已停止更新Fund编码数据.");
                         refreshTimeLabel.setText("stop");
@@ -91,7 +96,16 @@ public class TianTianFundHandler extends FundRefreshHandler {
             @Override
             public void run() {
                 refreshTimeLabel.setText(LocalDateTime.now().format(timeFormatter));
+                refreshTimeLabel.setToolTipText("最后刷新时间，刷新间隔" + threadSleepTime + "秒");
             }
         });
+    }
+
+    public int getThreadSleepTime() {
+        return threadSleepTime;
+    }
+
+    public void setThreadSleepTime(int threadSleepTime) {
+        this.threadSleepTime = threadSleepTime;
     }
 }

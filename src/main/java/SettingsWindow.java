@@ -8,9 +8,16 @@ import javax.swing.*;
 
 public class SettingsWindow  implements Configurable {
     private JPanel panel1;
-    private JTextField textField1;
-    private JTextField textField2;
+    private JTextArea textAreaFund;
+    private JTextArea textAreaStock;
     private JCheckBox checkbox;
+    /**
+     * 使用tab界面，方便不同的设置分开进行控制
+     */
+    private JTabbedPane tabbedPane1;
+    private JCheckBox checkBoxTableStriped;
+    private JSpinner spinnerFund;
+    private JSpinner spinnerStock;
 
     @Override
     public @Nls(capitalization = Nls.Capitalization.Title) String getDisplayName() {
@@ -23,9 +30,12 @@ public class SettingsWindow  implements Configurable {
         String value = instance.getValue("key_funds");
         String value_stock = instance.getValue("key_stocks");
         boolean value_color = instance.getBoolean("key_colorful");
-        textField1.setText(value);
-        textField2.setText(value_stock);
+        textAreaFund.setText(value);
+        textAreaStock.setText(value_stock);
         checkbox.setSelected(!value_color);
+        checkBoxTableStriped.setSelected(instance.getBoolean("key_table_striped"));
+        spinnerFund.setModel(new SpinnerNumberModel(instance.getInt("key_funds_thread_time", 60), 1, Integer.MAX_VALUE, 1));
+        spinnerStock.setModel(new SpinnerNumberModel(instance.getInt("key_stocks_thread_time", 10), 1, Integer.MAX_VALUE, 1));
         return panel1;
     }
 
@@ -37,9 +47,12 @@ public class SettingsWindow  implements Configurable {
     @Override
     public void apply() throws ConfigurationException {
         PropertiesComponent instance = PropertiesComponent.getInstance();
-        instance.setValue("key_funds",textField1.getText());
-        instance.setValue("key_stocks",textField2.getText());
+        instance.setValue("key_funds", textAreaFund.getText());
+        instance.setValue("key_stocks", textAreaStock.getText());
         instance.setValue("key_colorful",!checkbox.isSelected());
+        instance.setValue("key_funds_thread_time", spinnerFund.getValue().toString());
+        instance.setValue("key_stocks_thread_time", spinnerStock.getValue().toString());
+        instance.setValue("key_table_striped", checkBoxTableStriped.isSelected());
         StockWindow.apply();
         FundWindow.apply();
     }
