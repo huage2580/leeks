@@ -51,6 +51,12 @@ public class FundWindow implements ToolWindowFactory {
 
     @Override
     public void init(ToolWindow window) {
+        // 重要：由于idea项目窗口可多个，导致FundWindow#init方法被多次调用，出现UI和逻辑错误(bug #53)，故加此判断解决
+        if (Objects.nonNull(fundRefreshHandler)) {
+            LogUtil.info("Leeks UI已初始化");
+            return;
+        }
+
         JLabel refreshTimeLabel = new JLabel();
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
