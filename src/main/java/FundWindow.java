@@ -10,17 +10,20 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.table.JBTable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import utils.FundRefreshHandler;
-import utils.LogUtil;
-import utils.TianTianFundHandler;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import utils.LogUtil;
+import utils.TianTianFundHandler;
+import utils.XConstant;
 
 public class FundWindow implements ToolWindowFactory {
     private JPanel mPanel;
@@ -51,11 +54,7 @@ public class FundWindow implements ToolWindowFactory {
 
     @Override
     public void init(ToolWindow window) {
-        // 重要：由于idea项目窗口可多个，导致FundWindow#init方法被多次调用，出现UI和逻辑错误(bug #53)，故加此判断解决
-        if (Objects.nonNull(fundRefreshHandler)) {
-            LogUtil.info("Leeks UI已初始化");
-            return;
-        }
+        //一进入Android  Studio 就会走这里
 
         JLabel refreshTimeLabel = new JLabel();
         refreshTimeLabel.setToolTipText("最后刷新时间");
@@ -81,13 +80,19 @@ public class FundWindow implements ToolWindowFactory {
                 .setToolbarPosition(ActionToolbarPosition.TOP);
         JPanel toolPanel = toolbarDecorator.createPanel();
         toolbarDecorator.getActionsPanel().add(refreshTimeLabel, BorderLayout.EAST);
-        toolPanel.setBorder(new EmptyBorder(0,0,0,0));
+        toolPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
         mPanel.add(toolPanel, BorderLayout.CENTER);
         apply();
     }
 
-    private static List<String> loadFunds(){
-        return getConfigList("key_funds", "[,，]");
+    private static List<String> loadFunds() {
+        if (XConstant.IS_DEBUG) {
+            ArrayList<String> strings = new ArrayList<>();
+            strings.add("162605");
+            return strings;
+        } else {
+            return getConfigList("key_funds", "[,，]");
+        }
     }
 
     public static List<String> getConfigList(String key, String split) {

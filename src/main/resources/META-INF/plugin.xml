@@ -17,6 +17,8 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="service.AlertService"
+                            serviceImplementation="service.impl.AlertServiceImpl"/>
         <!-- Add your extensions here -->
         <toolWindow anchor="left" id="leeks" factoryClass="FundWindow"/>
         <applicationConfigurable id="leeks_settings" instance="SettingsWindow"/>

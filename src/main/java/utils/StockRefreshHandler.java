@@ -1,17 +1,23 @@
 package utils;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
+
 import org.apache.commons.lang3.StringUtils;
+
+import java.awt.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
+
+import service.AlertService;
 
 public abstract class StockRefreshHandler extends DefaultTableModel {
     private static String[] columnNames = new String[]{"编码", "股票名称", "当前价", "涨跌", "涨跌幅", "最高价", "最低价", "更新时间"};
@@ -20,9 +26,9 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     private boolean colorful = true;
 
     /**
-     * 更新数据的间隔时间（秒）
+     * 股票 更新数据的间隔时间（秒）
      */
-    protected volatile int threadSleepTime = 10;
+    protected volatile int threadSleepTime = XConstant.STOCK_UPDATE_INTERVAL;
 
     public StockRefreshHandler(JTable table) {
         this.table = table;
@@ -35,7 +41,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     }
 
     public void refreshColorful(boolean colorful) {
-        if (this.colorful == colorful){
+        if (this.colorful == colorful) {
             return;
         }
         this.colorful = colorful;
@@ -81,7 +87,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         }
     }
 
-    public void setupTable(List<String> code){
+    public void setupTable(List<String> code) {
         for (String s : code) {
             updateData(new StockBean(s));
         }
@@ -95,24 +101,25 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     private void columnColors(boolean colorful) {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row,
+                                                           int column) {
                 double temp = 0.0;
                 try {
-                    String s = value.toString().replace("%","");
+                    String s = value.toString().replace("%", "");
                     temp = Double.parseDouble(s);
                 } catch (Exception e) {
 
                 }
                 if (temp > 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.RED);
-                    }else {
+                    } else {
                         setForeground(JBColor.DARK_GRAY);
                     }
                 } else if (temp < 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.GREEN);
-                    }else {
+                    } else {
                         setForeground(JBColor.GRAY);
                     }
                 } else if (temp == 0) {
@@ -127,11 +134,11 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     }
 
     protected void updateData(StockBean bean) {
-        if (bean.getCode() == null){
+        if (bean.getCode() == null) {
             return;
         }
         Vector<Object> convertData = convertData(bean);
-        if (convertData == null){
+        if (convertData == null) {
             return;
         }
         // 获取行
@@ -186,20 +193,21 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     }
 
     private Vector<Object> convertData(StockBean fundBean) {
-        if (fundBean == null){
+        if (fundBean == null) {
             return null;
         }
         String timeStr = "--";
-        if (fundBean.getTime()!=null){
+        if (fundBean.getTime() != null) {
             timeStr = fundBean.getTime().substring(8);
         }
         String changeStr = "--";
         String changePercentStr = "--";
-        if (fundBean.getChange()!=null){
-            changeStr= fundBean.getChange().startsWith("-")?fundBean.getChange():"+"+fundBean.getChange();
+        if (fundBean.getChange() != null) {
+            changeStr = fundBean.getChange().startsWith("-") ? fundBean.getChange() : "+" + fundBean.getChange();
         }
-        if (fundBean.getChangePercent()!=null){
-            changePercentStr= fundBean.getChangePercent().startsWith("-")?fundBean.getChangePercent():"+"+fundBean.getChangePercent();
+        if (fundBean.getChangePercent() != null) {
+            changePercentStr = fundBean.getChangePercent().startsWith("-") ? fundBean.getChangePercent() :
+                    "+" + fundBean.getChangePercent();
         }
         // 与columnNames中的元素保持一致
         Vector<Object> v = new Vector<Object>(columnNames.length);
@@ -226,4 +234,54 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     public void setThreadSleepTime(int threadSleepTime) {
         this.threadSleepTime = threadSleepTime;
     }
+
+    protected List<StockBean> mStockBeans = new CopyOnWriteArrayList<>();
+
+    /**
+     * 看一下 是否需要 展示提醒对话框
+     */
+    protected void showDialogIfNeed() {
+        if (mStockBeans.size() == 0) {
+            return;
+        }
+        if (XDateUtil.isShowTime(false)) {
+                        /*ProgressManager.getInstance().executeNonCancelableSection(
+                                () -> AlertService.getInstance().showAlertDialog(null, period));*/
+            StringBuilder stringBuilder = new StringBuilder();
+            for (StockBean stockBean : mStockBeans) {
+                stringBuilder.append(stockBean.getName()).append(" ,  ").append(stockBean.getChangePercent()).append("%").append("<br>");
+            }
+            stringBuilder.append("该加仓了");
+            //展示内容:
+            ProgressManager.getInstance().executeNonCancelableSection(
+                    () -> {
+                        XDateUtil.updateStockShowDate();
+                        AlertService.getInstance().showAlertDialog(null, stringBuilder.toString());
+                    });
+            System.out.println("该加仓了");
+        } else {
+            System.out.println("没在加仓时间内");
+        }
+    }
+
+    /**
+     * 跌了0.5以上就加进来
+     */
+    protected void addDropFundIfNeed(StockBean bean) {
+        //如果是跌了  则是 -0.5 ?  这样子
+        String gszzl = bean.getChangePercent();
+        System.out.println(gszzl + "----");
+        if (!gszzl.contains("-")) {
+            //涨了
+            return;
+        }
+        try {
+            if (Float.parseFloat(gszzl) < XConstant.STOCK_ADDING_THRESHOLD) {
+                mStockBeans.add(bean);
+            }
+        } catch (Exception ignored) {
+            //格式化失败  不管
+        }
+    }
+
 }
