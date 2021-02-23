@@ -9,6 +9,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +37,13 @@ public class FundWindow implements ToolWindowFactory {
         Content content = contentFactory.createContent(mPanel, "Fund", false);
 
         Content content_stock = contentFactory.createContent(stockWindow.getmPanel(), "Stock", false);
-        toolWindow.getContentManager().addContent(content);
-        toolWindow.getContentManager().addContent(content_stock);
+        ContentManager contentManager = toolWindow.getContentManager();
+        contentManager.addContent(content);
+        contentManager.addContent(content_stock);
+        if (StringUtils.isEmpty(PropertiesComponent.getInstance().getValue("key_funds"))) {
+            // 没有配置基金数据，选择展示股票
+            contentManager.setSelectedContent(content_stock);
+        }
         LogUtil.setProject(project);
 //        ((ToolWindowManagerEx) ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerListener() {
 //            @Override
