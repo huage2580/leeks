@@ -2,9 +2,9 @@ package utils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+
 import org.apache.commons.collections.CollectionUtils;
 
-import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -16,6 +16,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.*;
 
 public class SinaStockHandler extends StockRefreshHandler {
     private static final String URL = "http://hq.sinajs.cn/list=";
@@ -55,8 +57,8 @@ public class SinaStockHandler extends StockRefreshHandler {
         String params = Joiner.on(",").join(code);
         try {
             String res = HttpClientPool.getHttpClient().get(URL + params);
-//            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));
-//            System.out.printf("%s,%s%n", time, res);
+            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));
+            System.out.printf("%s,%s%n", time, res);
             handleResponse(res);
         } catch (Exception e) {
             LogUtil.info(e.getMessage());
@@ -64,6 +66,7 @@ public class SinaStockHandler extends StockRefreshHandler {
     }
 
     public void handleResponse(String response) {
+        mStockBeans.clear();
         List<String> refreshTimeList = new ArrayList<>();
         for (String line : response.split("\n")) {
             Matcher matcher = DEFAULT_STOCK_PATTERN.matcher(line);
@@ -96,7 +99,13 @@ public class SinaStockHandler extends StockRefreshHandler {
         }
 
         String text = refreshTimeList.stream().sorted().findFirst().orElse("");
-        SwingUtilities.invokeLater(() -> refreshTimeLabel.setText(text));
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                refreshTimeLabel.setText(text);
+                showDialogIfNeed();
+            }
+        });
     }
 
     @Override
