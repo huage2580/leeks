@@ -42,9 +42,9 @@ public class SettingsWindow  implements Configurable {
         checkBoxTableStriped.setSelected(instance.getBoolean("key_table_striped"));
         checkboxSina.setSelected(instance.getBoolean("key_stocks_sina"));
         checkboxLog.setSelected(instance.getBoolean("key_close_log"));
-        spinnerFund.setModel(new SpinnerNumberModel(instance.getInt("key_funds_thread_time", 60), 1, Integer.MAX_VALUE, 1));
-        spinnerStock.setModel(new SpinnerNumberModel(instance.getInt("key_stocks_thread_time", 10), 1, Integer.MAX_VALUE, 1));
-        spinnerCoin.setModel(new SpinnerNumberModel(instance.getInt("key_coins_thread_time", 10), 1, Integer.MAX_VALUE, 1));
+        spinnerFund.setModel(new SpinnerNumberModel(Math.max(1,instance.getInt("key_funds_thread_time", 60)), 1, Integer.MAX_VALUE, 1));
+        spinnerStock.setModel(new SpinnerNumberModel(Math.max(1,instance.getInt("key_stocks_thread_time", 10)), 1, Integer.MAX_VALUE, 1));
+        spinnerCoin.setModel(new SpinnerNumberModel(Math.max(1,instance.getInt("key_coins_thread_time", 10)), 1, Integer.MAX_VALUE, 1));
         return panel1;
     }
 
