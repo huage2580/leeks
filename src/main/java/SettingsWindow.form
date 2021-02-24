@@ -175,6 +175,72 @@
               </component>
             </children>
           </grid>
+          <grid id="b3ed2" layout-manager="FormLayout">
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:d:grow"/>
+            <colspec value="left:0px:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <tabbedpane title="Coin"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="9bf70" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <font size="14"/>
+                  <text value="虚拟币编码，英文逗号分隔："/>
+                </properties>
+              </component>
+              <scrollpane id="63733">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="149ff" class="javax.swing.JTextArea" binding="textAreaCoin">
+                    <constraints/>
+                    <properties>
+                      <lineWrap value="true"/>
+                      <minimumSize width="370" height="17"/>
+                      <preferredSize width="370" height="95"/>
+                      <rows value="5"/>
+                      <toolTipText value="英文逗号分隔，例如：【btc_btcbtcusd,btc_btcethusd】注意编码正确性，一般格式为[btc_btc][币编码][usd]"/>
+                    </properties>
+                    <clientProperties>
+                      <html.disable class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="2e72f" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="持续刷新间隔时间（秒）："/>
+                </properties>
+              </component>
+              <component id="b5c4c" class="javax.swing.JSpinner" binding="spinnerCoin">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
         </children>
       </tabbedpane>
       <component id="8c26" class="javax.swing.JLabel">
@@ -183,7 +249,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="小韭菜 V1.7.1"/>
+          <text value="小韭菜 V1.8.1"/>
         </properties>
       </component>
       <grid id="b17a5" layout-manager="FlowLayout" hgap="30" vgap="5" flow-align="0">

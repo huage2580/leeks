@@ -29,17 +29,21 @@ public class FundWindow implements ToolWindowFactory {
     static TianTianFundHandler fundRefreshHandler;
 
     private StockWindow stockWindow = new StockWindow();
+    private CoinWindow coinWindow = new CoinWindow();
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(mPanel, "Fund", false);
-
+        //股票
         Content content_stock = contentFactory.createContent(stockWindow.getmPanel(), "Stock", false);
+        //虚拟货币
+        Content content_coin = contentFactory.createContent(coinWindow.getmPanel(),"Coin",false);
         ContentManager contentManager = toolWindow.getContentManager();
         contentManager.addContent(content);
         contentManager.addContent(content_stock);
+        contentManager.addContent(content_coin);
         if (StringUtils.isEmpty(PropertiesComponent.getInstance().getValue("key_funds"))) {
             // 没有配置基金数据，选择展示股票
             contentManager.setSelectedContent(content_stock);

@@ -4,7 +4,7 @@ idea插件，查看基金，股票：支持A股，港股，美股
 ## 请先阅读完readme，确保编码正确输入  
 提issues附上:使用的插件版本、IDEA详细的版本信息(到Help->about里面复制出来)
 
-## 安装  
+## 安装   
 leeks-1.x.x.zip 直接在IDEA里面安装(IDEA2019.3以下只能安装1.5.x及以下版本)  
 
 ## 使用  
@@ -12,7 +12,12 @@ leeks-1.x.x.zip 直接在IDEA里面安装(IDEA2019.3以下只能安装1.5.x及�
 `隐蔽模式默认开启，开启无着色，并且拼音显示，可以自行关闭。`  
 （股票编码建议用雪球看网页找，示例代码：（sh000001,sh600519,sz000001,hk00700,usAAPL）基金编码zfb上面有，或者天天基金看,请注意 `股票编码大小写`)  
 double shift，连按两下shift，输入leeks，找到toolWindow，打开以后默认在下方，自行调节位置  
-基金更新频率一分钟一次，股票10s一次
+每次修改，添加基金,股票，都需要点refresh按钮(fund窗口的按钮，同时刷新股票和基金)或者重启IDEA。  
+基金更新频率一分钟一次，股票10s一次  
+### 加密货币的选项
+加密货币行情采用新浪的接口，编码格式如下:  
+例:`比特币`货币的编码为`btc_btcbtcusd`,【btc_btc】【加密货币代码】【usd】  
+支持的货币和代码在这里 [https://finance.sina.com.cn/blockchain/hq.shtml]
 
 ![da](https://github.com/huage2580/leeks/blob/master/img1.png)
 ![dd](https://github.com/huage2580/leeks/blob/master/img2.png)
@@ -39,8 +44,10 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 适配IDEA 2020.3  
 - v1.6.3  
 修复颜色错乱问题 , 日志调整 merge from [qwn3213](https://github.com/qwn3213)  
-- v1.7.1  
-增加日志开关 ,设置界面样式调整 merge from [dengerYang](https://github.com/dengerYang) ，增加新浪股票接口备选 merge from [JulianXG](https://github.com/JulianXG)
+- v1.7.1
+增加日志开关 ,设置界面样式调整 merge from [dengerYang](https://github.com/dengerYang) ，增加新浪股票接口备选 merge from [JulianXG](https://github.com/JulianXG)  
+- v1.8.1  
+增加了虚拟货币的界面
 
 
 
