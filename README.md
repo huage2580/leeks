@@ -1,4 +1,8 @@
-# leeks ![star](https://img.shields.io/github/stars/huage2580/leeks)
+# leeks
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/huage2580/leeks?label=RELEASE&style=flat-square&logo=github&color=green)
+![star](https://img.shields.io/github/stars/huage2580/leeks?style=flat-square&logo=github)
+
 idea插件，查看基金，股票：支持A股，港股，美股  
 
 ## 请先阅读完readme，确保编码正确输入  
