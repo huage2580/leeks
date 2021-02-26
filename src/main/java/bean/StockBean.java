@@ -1,4 +1,4 @@
-package utils;
+package bean;
 
 import java.util.Objects;
 

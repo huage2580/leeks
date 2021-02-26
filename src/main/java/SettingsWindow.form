@@ -249,7 +249,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="小韭菜 V1.8.1"/>
+          <text value="小韭菜 V1.8.2"/>
         </properties>
       </component>
       <grid id="b17a5" layout-manager="FlowLayout" hgap="30" vgap="5" flow-align="0">

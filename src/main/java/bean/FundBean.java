@@ -1,4 +1,4 @@
-package utils;
+package bean;
 
 import com.google.gson.annotations.SerializedName;
 

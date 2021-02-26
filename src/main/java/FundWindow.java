@@ -13,9 +13,8 @@ import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import utils.FundRefreshHandler;
 import utils.LogUtil;
-import utils.TianTianFundHandler;
+import handler.TianTianFundHandler;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

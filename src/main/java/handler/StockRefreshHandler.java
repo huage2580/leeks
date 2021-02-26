@@ -1,8 +1,10 @@
-package utils;
+package handler;
 
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
+import bean.StockBean;
+import utils.PinYinUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -13,8 +15,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
-public abstract class CoinRefreshHandler extends DefaultTableModel {
-    private static String[] columnNames = new String[]{"编码", "名称", "当前价", "更新时间"};
+public abstract class StockRefreshHandler extends DefaultTableModel {
+    private static String[] columnNames = new String[]{"编码", "股票名称", "当前价", "涨跌", "涨跌幅", "最高价", "最低价", "更新时间"};
 
     private JTable table;
     private boolean colorful = true;
@@ -24,7 +26,7 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
      */
     protected volatile int threadSleepTime = 10;
 
-    public CoinRefreshHandler(JTable table) {
+    public StockRefreshHandler(JTable table) {
         this.table = table;
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         // Fix tree row height
@@ -45,7 +47,18 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
         } else {
             setColumnIdentifiers(PinYinUtils.toPinYin(columnNames));
         }
-
+        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(this);
+        Comparator<Object> dobleComparator = (o1, o2) -> {
+            Double v1 = Double.parseDouble(StringUtils.remove((String) o1, '%'));
+            Double v2 = Double.parseDouble(StringUtils.remove((String) o2, '%'));
+            return v1.compareTo(v2);
+        };
+        rowSorter.setComparator(2, dobleComparator);
+        rowSorter.setComparator(3, dobleComparator);
+        rowSorter.setComparator(4, dobleComparator);
+        rowSorter.setComparator(5, dobleComparator);
+        rowSorter.setComparator(6, dobleComparator);
+        table.setRowSorter(rowSorter);
         columnColors(colorful);
     }
 
@@ -72,7 +85,7 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
 
     public void setupTable(List<String> code){
         for (String s : code) {
-            updateData(new CoinBean(s));
+            updateData(new StockBean(s));
         }
     }
 
@@ -111,10 +124,11 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(4)).setCellRenderer(cellRenderer);
     }
 
-    protected void updateData(CoinBean bean) {
+    protected void updateData(StockBean bean) {
         if (bean.getCode() == null){
             return;
         }
@@ -173,19 +187,31 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
         return -1;
     }
 
-    private Vector<Object> convertData(CoinBean coinBean) {
-        if (coinBean == null){
+    private Vector<Object> convertData(StockBean fundBean) {
+        if (fundBean == null){
             return null;
         }
         String timeStr = "--";
-        if (coinBean.getTimeStamp()!=null){
-            timeStr = coinBean.getTimeStamp();
+        if (fundBean.getTime()!=null){
+            timeStr = fundBean.getTime().substring(8);
+        }
+        String changeStr = "--";
+        String changePercentStr = "--";
+        if (fundBean.getChange()!=null){
+            changeStr= fundBean.getChange().startsWith("-")?fundBean.getChange():"+"+fundBean.getChange();
+        }
+        if (fundBean.getChangePercent()!=null){
+            changePercentStr= fundBean.getChangePercent().startsWith("-")?fundBean.getChangePercent():"+"+fundBean.getChangePercent();
         }
         // 与columnNames中的元素保持一致
         Vector<Object> v = new Vector<Object>(columnNames.length);
-        v.addElement(coinBean.getCode());
-        v.addElement(colorful ? coinBean.getName() : PinYinUtils.toPinYin(coinBean.getName()));
-        v.addElement(coinBean.getPrice());
+        v.addElement(fundBean.getCode());
+        v.addElement(colorful ? fundBean.getName() : PinYinUtils.toPinYin(fundBean.getName()));
+        v.addElement(fundBean.getNow());
+        v.addElement(changeStr);
+        v.addElement(changePercentStr + "%");
+        v.addElement(fundBean.getMax());
+        v.addElement(fundBean.getMin());
         v.addElement(timeStr);
         return v;
     }

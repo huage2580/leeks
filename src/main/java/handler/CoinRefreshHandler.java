@@ -1,28 +1,30 @@
-package utils;
+package handler;
 
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
+import bean.CoinBean;
+import utils.PinYinUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
-public abstract class FundRefreshHandler extends DefaultTableModel{
-    private static String[] columnNames = {"编码", "基金名称", "估算净值", "估算涨跌", "更新时间", "当日净值"};
+public abstract class CoinRefreshHandler extends DefaultTableModel {
+    private static String[] columnNames = new String[]{"编码", "名称", "当前价", "更新时间"};
 
     private JTable table;
     private boolean colorful = true;
 
+    /**
+     * 更新数据的间隔时间（秒）
+     */
+    protected volatile int threadSleepTime = 10;
 
-    public FundRefreshHandler(JTable table) {
+    public CoinRefreshHandler(JTable table) {
         this.table = table;
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         // Fix tree row height
@@ -43,15 +45,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         } else {
             setColumnIdentifiers(PinYinUtils.toPinYin(columnNames));
         }
-        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(this);
-        Comparator<Object> doubleComparator = (o1, o2) -> {
-            Double v1 = Double.parseDouble(StringUtils.remove((String) o1, '%'));
-            Double v2 = Double.parseDouble(StringUtils.remove((String) o2, '%'));
-            return v1.compareTo(v2);
-        };
-        rowSorter.setComparator(2, doubleComparator);
-        rowSorter.setComparator(3, doubleComparator);
-        table.setRowSorter(rowSorter);
+
         columnColors(colorful);
     }
 
@@ -63,7 +57,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
     public abstract void handle(List<String> code);
 
     /**
-     * 设置表格条纹（斑马线）
+     * 设置表格条纹（斑马线）<br>
      *
      * @param striped true设置条纹
      * @throws RuntimeException 如果table不是{@link JBTable}类型，请自行实现setStriped
@@ -76,13 +70,9 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         }
     }
 
-    /**
-     * 按照编码顺序初始化，for 每次刷新都乱序，没办法控制显示顺序
-     * @param code
-     */
     public void setupTable(List<String> code){
         for (String s : code) {
-            updateData(new FundBean(s));
+            updateData(new CoinBean(s));
         }
     }
 
@@ -97,7 +87,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 double temp = 0.0;
                 try {
-                    String s = StringUtils.remove(value.toString(), '%');
+                    String s = value.toString().replace("%","");
                     temp = Double.parseDouble(s);
                 } catch (Exception e) {
 
@@ -121,20 +111,19 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-//        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
-        table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
     }
 
-    protected void updateData(FundBean bean) {
-        if (bean.getFundCode() == null){
+    protected void updateData(CoinBean bean) {
+        if (bean.getCode() == null){
             return;
         }
         Vector<Object> convertData = convertData(bean);
-        if (convertData==null){
+        if (convertData == null){
             return;
         }
         // 获取行
-        int index = findRowIndex(0, bean.getFundCode());
+        int index = findRowIndex(0, bean.getCode());
         if (index >= 0) {
             updateRow(index, convertData);
         } else {
@@ -184,36 +173,33 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
         return -1;
     }
 
-    private Vector<Object> convertData(FundBean fundBean) {
-        if (fundBean.getFundCode() == null){
+    private Vector<Object> convertData(CoinBean coinBean) {
+        if (coinBean == null){
             return null;
         }
-        String timeStr = fundBean.getGztime();
-        if(timeStr == null){
-            timeStr = "--";
-        }
-        String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
-        if (timeStr.startsWith(today)) {
-            timeStr = timeStr.substring(timeStr.indexOf(" "));
-        }
-        String gszzlStr = "--";
-        String gszzl = fundBean.getGszzl();
-        if (gszzl !=null){
-            gszzlStr= gszzl.startsWith("-")? gszzl :"+"+ gszzl;
+        String timeStr = "--";
+        if (coinBean.getTimeStamp()!=null){
+            timeStr = coinBean.getTimeStamp();
         }
         // 与columnNames中的元素保持一致
         Vector<Object> v = new Vector<Object>(columnNames.length);
-        v.addElement(fundBean.getFundCode());
-        v.addElement(colorful ? fundBean.getFundName() : PinYinUtils.toPinYin(fundBean.getFundName()));
-        v.addElement(fundBean.getGsz());
-        v.addElement( gszzlStr+"%");
+        v.addElement(coinBean.getCode());
+        v.addElement(colorful ? coinBean.getName() : PinYinUtils.toPinYin(coinBean.getName()));
+        v.addElement(coinBean.getPrice());
         v.addElement(timeStr);
-        v.addElement(fundBean.getDwjz()+"["+fundBean.getJzrq()+"]");
         return v;
     }
 
     @Override
     public boolean isCellEditable(int row, int column) {
         return false;
+    }
+
+    public int getThreadSleepTime() {
+        return threadSleepTime;
+    }
+
+    public void setThreadSleepTime(int threadSleepTime) {
+        this.threadSleepTime = threadSleepTime;
     }
 }

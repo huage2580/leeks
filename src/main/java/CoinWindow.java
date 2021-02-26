@@ -5,8 +5,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
+import handler.CoinRefreshHandler;
+import handler.SinaCoinHandler;
 import org.jetbrains.annotations.NotNull;
-import utils.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -1,4 +1,4 @@
-package utils;
+package bean;
 
 public class CoinBean {
     private String code;
@@ -8,6 +8,7 @@ public class CoinBean {
 
     public CoinBean(String code) {
         this.code = code;
+        this.name = "--";
     }
 
     public CoinBean(String code, String name, String timeStamp, String price) {

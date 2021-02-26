@@ -6,9 +6,9 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
-import utils.SinaStockHandler;
-import utils.StockRefreshHandler;
-import utils.TencentStockHandler;
+import handler.SinaStockHandler;
+import handler.StockRefreshHandler;
+import handler.TencentStockHandler;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
