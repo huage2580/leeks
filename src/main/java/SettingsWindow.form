@@ -62,7 +62,6 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <font size="14"/>
                   <text value="基金编码，英文逗号分隔："/>
                 </properties>
               </component>
@@ -130,7 +129,6 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <font size="14"/>
                   <text value="股票编码，英文逗号分隔："/>
                 </properties>
               </component>
@@ -196,7 +194,6 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <font size="14"/>
                   <text value="虚拟币编码，英文逗号分隔："/>
                 </properties>
               </component>
