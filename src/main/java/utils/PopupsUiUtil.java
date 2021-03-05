@@ -56,6 +56,14 @@ public class PopupsUiUtil {
                 // 日K线图 http://image.sinajs.cn/newchart/usstock/daily/aapl.gif
                 // 周K线图 http://image.sinajs.cn/newchart/usstock/weekly/aapl.gif
                 // 月K线图 http://image.sinajs.cn/newchart/usstock/monthly/aapl.gif
+                if (StockShowType.min.equals(type)) {
+                    url = String.format("%s/png/%s/%s/%s.png?%s", url, type.getType(), prefix, StringUtils.substring(stockCode, 2),
+                            System.currentTimeMillis());
+                } else {
+                    url = String.format("%s/%sstock/%s/%s.gif?%s", url, prefix, type.getType(), StringUtils.substring(stockCode, 2),
+                            System.currentTimeMillis());
+                }
+                break;
             case "hk":
                 // 港股
                 // 分时线图 http://image.sinajs.cn/newchart/png/min/hk/02202.png
@@ -66,7 +74,7 @@ public class PopupsUiUtil {
                     url = String.format("%s/png/%s/%s/%s.png?%s", url, type.getType(), prefix, StringUtils.substring(stockCode, 2),
                             System.currentTimeMillis());
                 } else {
-                    url = String.format("%s/%s_stock/%s/%s.png?%s", url, prefix, type.getType(), StringUtils.substring(stockCode, 2),
+                    url = String.format("%s/%s_stock/%s/%s.gif?%s", url, prefix, type.getType(), StringUtils.substring(stockCode, 2),
                             System.currentTimeMillis());
                 }
                 break;
