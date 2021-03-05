@@ -78,7 +78,7 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="170"/>
+                      <preferredSize width="370" height="190"/>
                       <rows value="10"/>
                       <text value=""/>
                       <toolTipText value="基金编码，英文逗号分隔"/>
@@ -145,7 +145,7 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="170"/>
+                      <preferredSize width="370" height="190"/>
                       <rows value="10"/>
                       <toolTipText value="股票编码，英文逗号分隔，例如：【sh000001,sh600519,sz000001,hk00700,usAAPL】"/>
                     </properties>
@@ -210,7 +210,7 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="170"/>
+                      <preferredSize width="370" height="190"/>
                       <rows value="10"/>
                       <toolTipText value="英文逗号分隔，例如：【btc_btcbtcusd,btc_btcethusd】注意编码正确性，一般格式为[btc_btc][币编码][usd]"/>
                     </properties>
@@ -246,7 +246,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="小韭菜 V1.8.2"/>
+          <text value="小韭菜 V1.8.3"/>
         </properties>
       </component>
       <grid id="b17a5" layout-manager="FlowLayout" hgap="30" vgap="5" flow-align="0">
