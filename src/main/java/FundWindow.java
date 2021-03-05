@@ -3,22 +3,31 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupStep;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import utils.LogUtil;
 import handler.TianTianFundHandler;
+import utils.PopupsUiUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
 import java.util.*;
 import java.util.List;
 
@@ -70,6 +79,41 @@ public class FundWindow implements ToolWindowFactory {
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         JBTable table = new JBTable();
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                String code = String.valueOf(table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()), 0));
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
+                    // 鼠标左键双击
+                    try {
+                        PopupsUiUtil.showImageByFundCode(code, PopupsUiUtil.FundShowType.gsz, new Point(e.getXOnScreen(), e.getYOnScreen()));
+                    } catch (MalformedURLException ex) {
+                        ex.printStackTrace();
+                        LogUtil.info(ex.getMessage());
+                    }
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    //鼠标右键
+                    JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PopupsUiUtil.FundShowType>("",
+                            PopupsUiUtil.FundShowType.values()) {
+                        @Override
+                        public @NotNull String getTextFor(PopupsUiUtil.FundShowType value) {
+                            return value.getDesc();
+                        }
+
+                        @Override
+                        public @Nullable PopupStep onChosen(PopupsUiUtil.FundShowType selectedValue, boolean finalChoice) {
+                            try {
+                                PopupsUiUtil.showImageByFundCode(code, selectedValue, new Point(e.getXOnScreen(), e.getYOnScreen()));
+                            } catch (MalformedURLException ex) {
+                                ex.printStackTrace();
+                                LogUtil.info(ex.getMessage());
+                            }
+                            return super.onChosen(selectedValue, finalChoice);
+                        }
+                    }).show(RelativePoint.fromScreen(new Point(e.getXOnScreen(), e.getYOnScreen())));
+                }
+            }
+        });
         fundRefreshHandler = new TianTianFundHandler(table, refreshTimeLabel);
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
             @Override

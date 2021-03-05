@@ -2,17 +2,27 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupStep;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
 import handler.SinaStockHandler;
 import handler.StockRefreshHandler;
 import handler.TencentStockHandler;
+import org.jetbrains.annotations.Nullable;
+import utils.LogUtil;
+import utils.PopupsUiUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
 import java.util.List;
 
 public class StockWindow {
@@ -32,6 +42,41 @@ public class StockWindow {
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         table = new JBTable();
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                String code = String.valueOf(table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()), 0));
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
+                    // 鼠标左键双击
+                    try {
+                        PopupsUiUtil.showImageByStockCode(code, PopupsUiUtil.StockShowType.min, new Point(e.getXOnScreen(), e.getYOnScreen()));
+                    } catch (MalformedURLException ex) {
+                        ex.printStackTrace();
+                        LogUtil.info(ex.getMessage());
+                    }
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    //鼠标右键
+                    JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PopupsUiUtil.StockShowType>("",
+                            PopupsUiUtil.StockShowType.values()) {
+                        @Override
+                        public @NotNull String getTextFor(PopupsUiUtil.StockShowType value) {
+                            return value.getDesc();
+                        }
+
+                        @Override
+                        public @Nullable PopupStep onChosen(PopupsUiUtil.StockShowType selectedValue, boolean finalChoice) {
+                            try {
+                                PopupsUiUtil.showImageByStockCode(code, selectedValue, new Point(e.getXOnScreen(), e.getYOnScreen()));
+                            } catch (MalformedURLException ex) {
+                                ex.printStackTrace();
+                                LogUtil.info(ex.getMessage());
+                            }
+                            return super.onChosen(selectedValue, finalChoice);
+                        }
+                    }).show(RelativePoint.fromScreen(new Point(e.getXOnScreen(), e.getYOnScreen())));
+                }
+            }
+        });
     }
 
     public StockWindow() {

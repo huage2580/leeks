@@ -62,7 +62,6 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <font size="14"/>
                   <text value="基金编码，英文逗号分隔："/>
                 </properties>
               </component>
@@ -79,8 +78,8 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="95"/>
-                      <rows value="5"/>
+                      <preferredSize width="370" height="170"/>
+                      <rows value="10"/>
                       <text value=""/>
                       <toolTipText value="基金编码，英文逗号分隔"/>
                     </properties>
@@ -130,7 +129,6 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <font size="14"/>
                   <text value="股票编码，英文逗号分隔："/>
                 </properties>
               </component>
@@ -147,8 +145,8 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="95"/>
-                      <rows value="5"/>
+                      <preferredSize width="370" height="170"/>
+                      <rows value="10"/>
                       <toolTipText value="股票编码，英文逗号分隔，例如：【sh000001,sh600519,sz000001,hk00700,usAAPL】"/>
                     </properties>
                     <clientProperties>
@@ -196,7 +194,6 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <font size="14"/>
                   <text value="虚拟币编码，英文逗号分隔："/>
                 </properties>
               </component>
@@ -213,8 +210,8 @@
                     <properties>
                       <lineWrap value="true"/>
                       <minimumSize width="370" height="17"/>
-                      <preferredSize width="370" height="95"/>
-                      <rows value="5"/>
+                      <preferredSize width="370" height="170"/>
+                      <rows value="10"/>
                       <toolTipText value="英文逗号分隔，例如：【btc_btcbtcusd,btc_btcethusd】注意编码正确性，一般格式为[btc_btc][币编码][usd]"/>
                     </properties>
                     <clientProperties>
