@@ -64,7 +64,8 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 增加了虚拟货币的界面  
 - v1.8.3  
 增加了分时图和K线图 merge from [dengerYang](https://github.com/dengerYang)  
-
+- V1.8.4  
+bug fix from [DAIE](https://github.com/DA1Y1)
 
 
 
