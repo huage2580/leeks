@@ -45,6 +45,8 @@ public class StockWindow {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (table.getSelectedRow() < 0)
+                    return;
                 String code = String.valueOf(table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()), 0));
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
                     // 鼠标左键双击

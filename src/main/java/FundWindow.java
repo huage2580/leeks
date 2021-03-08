@@ -47,7 +47,7 @@ public class FundWindow implements ToolWindowFactory {
         //股票
         Content content_stock = contentFactory.createContent(stockWindow.getmPanel(), "Stock", false);
         //虚拟货币
-        Content content_coin = contentFactory.createContent(coinWindow.getmPanel(),"Coin",false);
+        Content content_coin = contentFactory.createContent(coinWindow.getmPanel(), "Coin", false);
         ContentManager contentManager = toolWindow.getContentManager();
         contentManager.addContent(content);
         contentManager.addContent(content_stock);
@@ -82,6 +82,8 @@ public class FundWindow implements ToolWindowFactory {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (table.getSelectedRow() < 0)
+                    return;
                 String code = String.valueOf(table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()), 0));
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
                     // 鼠标左键双击
@@ -134,12 +136,12 @@ public class FundWindow implements ToolWindowFactory {
                 .setToolbarPosition(ActionToolbarPosition.TOP);
         JPanel toolPanel = toolbarDecorator.createPanel();
         toolbarDecorator.getActionsPanel().add(refreshTimeLabel, BorderLayout.EAST);
-        toolPanel.setBorder(new EmptyBorder(0,0,0,0));
+        toolPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
         mPanel.add(toolPanel, BorderLayout.CENTER);
         apply();
     }
 
-    private static List<String> loadFunds(){
+    private static List<String> loadFunds() {
         return getConfigList("key_funds", "[,，]");
     }
 
