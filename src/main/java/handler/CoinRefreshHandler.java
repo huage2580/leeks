@@ -1,23 +1,35 @@
 package handler;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 import bean.CoinBean;
 import utils.PinYinUtils;
+import utils.WindowUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 public abstract class CoinRefreshHandler extends DefaultTableModel {
-    private static String[] columnNames = new String[]{"编码", "名称", "当前价", "更新时间"};
+    private static String[] columnNames;
 
     private JTable table;
     private boolean colorful = true;
+
+    static {
+        PropertiesComponent instance = PropertiesComponent.getInstance();
+        if (instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY) == null) {
+            instance.setValue(WindowUtils.COIN_TABLE_HEADER_KEY, WindowUtils.COIN_TABLE_HEADER_VALUE);
+        }
+
+        columnNames = Objects.requireNonNull(instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY)).split(",");
+    }
 
     /**
      * 更新数据的间隔时间（秒）
@@ -35,7 +47,7 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
     }
 
     public void refreshColorful(boolean colorful) {
-        if (this.colorful == colorful){
+        if (this.colorful == colorful) {
             return;
         }
         this.colorful = colorful;
@@ -70,7 +82,7 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
         }
     }
 
-    public void setupTable(List<String> code){
+    public void setupTable(List<String> code) {
         for (String s : code) {
             updateData(new CoinBean(s));
         }
@@ -87,21 +99,21 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 double temp = 0.0;
                 try {
-                    String s = value.toString().replace("%","");
+                    String s = value.toString().replace("%", "");
                     temp = Double.parseDouble(s);
                 } catch (Exception e) {
 
                 }
                 if (temp > 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.RED);
-                    }else {
+                    } else {
                         setForeground(JBColor.DARK_GRAY);
                     }
                 } else if (temp < 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.GREEN);
-                    }else {
+                    } else {
                         setForeground(JBColor.GRAY);
                     }
                 } else if (temp == 0) {
@@ -111,19 +123,21 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
+        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "当前价");
+        table.getColumn(getColumnName(columnIndex)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(CoinBean bean) {
-        if (bean.getCode() == null){
+        if (bean.getCode() == null) {
             return;
         }
         Vector<Object> convertData = convertData(bean);
-        if (convertData == null){
+        if (convertData == null) {
             return;
         }
         // 获取行
-        int index = findRowIndex(0, bean.getCode());
+        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "编码");
+        int index = findRowIndex(columnIndex, bean.getCode());
         if (index >= 0) {
             updateRow(index, convertData);
         } else {
@@ -174,19 +188,14 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
     }
 
     private Vector<Object> convertData(CoinBean coinBean) {
-        if (coinBean == null){
+        if (coinBean == null) {
             return null;
-        }
-        String timeStr = "--";
-        if (coinBean.getTimeStamp()!=null){
-            timeStr = coinBean.getTimeStamp();
         }
         // 与columnNames中的元素保持一致
         Vector<Object> v = new Vector<Object>(columnNames.length);
-        v.addElement(coinBean.getCode());
-        v.addElement(colorful ? coinBean.getName() : PinYinUtils.toPinYin(coinBean.getName()));
-        v.addElement(coinBean.getPrice());
-        v.addElement(timeStr);
+        for (int i = 0; i < columnNames.length; i++) {
+            v.addElement(coinBean.getValueByColumn(columnNames[i], colorful));
+        }
         return v;
     }
 

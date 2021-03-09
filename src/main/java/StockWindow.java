@@ -16,13 +16,16 @@ import handler.TencentStockHandler;
 import org.jetbrains.annotations.Nullable;
 import utils.LogUtil;
 import utils.PopupsUiUtil;
+import utils.WindowUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.List;
 
 public class StockWindow {
@@ -42,6 +45,24 @@ public class StockWindow {
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         table = new JBTable();
+        //记录列名的变化
+        table.getTableHeader().addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                String[] tableHeadChange = new String[table.getColumnCount()];
+                for (int i = 0; i < table.getColumnCount(); i++) {
+                    tableHeadChange[i] = table.getColumnName(i);
+                }
+                PropertiesComponent instance = PropertiesComponent.getInstance();
+                //将列名的修改放入环境中 key:stock_table_header_key
+                instance.setValue(WindowUtils.STOCK_TABLE_HEADER_KEY, Arrays.toString(tableHeadChange)
+                        .substring(1, Arrays.toString(tableHeadChange).length() - 1)
+                        .replaceAll(" ", ""));
+
+                //LogUtil.info(instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY));
+            }
+
+        });
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

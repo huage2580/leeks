@@ -1,7 +1,10 @@
 package bean;
 
 import com.google.gson.annotations.SerializedName;
+import utils.PinYinUtils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class FundBean {
@@ -92,5 +95,44 @@ public class FundBean {
     @Override
     public int hashCode() {
         return Objects.hash(fundCode);
+    }
+
+    /**
+     * 返回列名的VALUE 用作展示
+     * @param colums 字段名
+     * @param colorful 隐蔽模式
+     * @return 对应列名的VALUE值 无法匹配返回""
+     */
+    public String getValueByColumn(String colums, boolean colorful) {
+        switch (colums) {
+            case "编码":
+                return this.getFundCode();
+            case "基金名称":
+                return colorful ? this.getFundName() : PinYinUtils.toPinYin(this.getFundName());
+            case "估算净值":
+                return this.getGsz();
+            case "估算涨跌":
+                String gszzlStr = "--";
+                String gszzl = this.getGszzl();
+                if (gszzl != null) {
+                    gszzlStr = gszzl.startsWith("-") ? gszzl : "+" + gszzl;
+                }
+                return gszzlStr + "%";
+            case "更新时间":
+                String timeStr = this.getGztime();
+                if (timeStr == null) {
+                    timeStr = "--";
+                }
+                String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+                if (timeStr.startsWith(today)) {
+                    timeStr = timeStr.substring(timeStr.indexOf(" "));
+                }
+                return timeStr;
+            case "当日净值":
+                return this.getDwjz() + "[" + this.getJzrq() + "]";
+            default:
+                return "";
+
+        }
     }
 }

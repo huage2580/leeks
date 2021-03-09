@@ -1,10 +1,12 @@
 package handler;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 import bean.StockBean;
 import utils.PinYinUtils;
+import utils.WindowUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -13,13 +15,23 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 public abstract class StockRefreshHandler extends DefaultTableModel {
-    private static String[] columnNames = new String[]{"编码", "股票名称", "当前价", "涨跌", "涨跌幅", "最高价", "最低价", "更新时间"};
+    private static String[] columnNames;
 
     private JTable table;
     private boolean colorful = true;
+
+    static {
+        PropertiesComponent instance = PropertiesComponent.getInstance();
+        if (instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY) == null) {
+            instance.setValue(WindowUtils.STOCK_TABLE_HEADER_KEY, WindowUtils.STOCK_TABLE_HEADER_VALUE);
+        }
+
+        columnNames = Objects.requireNonNull(instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY)).split(",");
+    }
 
     /**
      * 更新数据的间隔时间（秒）
@@ -37,7 +49,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     }
 
     public void refreshColorful(boolean colorful) {
-        if (this.colorful == colorful){
+        if (this.colorful == colorful) {
             return;
         }
         this.colorful = colorful;
@@ -83,7 +95,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         }
     }
 
-    public void setupTable(List<String> code){
+    public void setupTable(List<String> code) {
         for (String s : code) {
             updateData(new StockBean(s));
         }
@@ -100,21 +112,21 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 double temp = 0.0;
                 try {
-                    String s = value.toString().replace("%","");
+                    String s = value.toString().replace("%", "");
                     temp = Double.parseDouble(s);
                 } catch (Exception e) {
 
                 }
                 if (temp > 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.RED);
-                    }else {
+                    } else {
                         setForeground(JBColor.DARK_GRAY);
                     }
                 } else if (temp < 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.GREEN);
-                    }else {
+                    } else {
                         setForeground(JBColor.GRAY);
                     }
                 } else if (temp == 0) {
@@ -124,20 +136,23 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-        table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
-        table.getColumn(getColumnName(4)).setCellRenderer(cellRenderer);
+        int columnIndex1 = WindowUtils.getColumnIndexByName(columnNames, "涨跌");
+        int columnIndex2 = WindowUtils.getColumnIndexByName(columnNames, "涨跌幅");
+        table.getColumn(getColumnName(columnIndex1)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(columnIndex2)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(StockBean bean) {
-        if (bean.getCode() == null){
+        if (bean.getCode() == null) {
             return;
         }
         Vector<Object> convertData = convertData(bean);
-        if (convertData == null){
+        if (convertData == null) {
             return;
         }
         // 获取行
-        int index = findRowIndex(0, bean.getCode());
+        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "编码");
+        int index = findRowIndex(columnIndex, bean.getCode());
         if (index >= 0) {
             updateRow(index, convertData);
         } else {
@@ -187,32 +202,15 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         return -1;
     }
 
-    private Vector<Object> convertData(StockBean fundBean) {
-        if (fundBean == null){
+    private Vector<Object> convertData(StockBean stockBean) {
+        if (stockBean == null) {
             return null;
-        }
-        String timeStr = "--";
-        if (fundBean.getTime()!=null){
-            timeStr = fundBean.getTime().substring(8);
-        }
-        String changeStr = "--";
-        String changePercentStr = "--";
-        if (fundBean.getChange()!=null){
-            changeStr= fundBean.getChange().startsWith("-")?fundBean.getChange():"+"+fundBean.getChange();
-        }
-        if (fundBean.getChangePercent()!=null){
-            changePercentStr= fundBean.getChangePercent().startsWith("-")?fundBean.getChangePercent():"+"+fundBean.getChangePercent();
         }
         // 与columnNames中的元素保持一致
         Vector<Object> v = new Vector<Object>(columnNames.length);
-        v.addElement(fundBean.getCode());
-        v.addElement(colorful ? fundBean.getName() : PinYinUtils.toPinYin(fundBean.getName()));
-        v.addElement(fundBean.getNow());
-        v.addElement(changeStr);
-        v.addElement(changePercentStr + "%");
-        v.addElement(fundBean.getMax());
-        v.addElement(fundBean.getMin());
-        v.addElement(timeStr);
+        for (int i = 0; i < columnNames.length; i++) {
+            v.addElement(stockBean.getValueByColumn(columnNames[i], colorful));
+        }
         return v;
     }
 

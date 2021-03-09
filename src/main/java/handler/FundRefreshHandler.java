@@ -1,10 +1,13 @@
 package handler;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
 import bean.FundBean;
+import org.jetbrains.annotations.Nullable;
 import utils.PinYinUtils;
+import utils.WindowUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -15,13 +18,23 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
-public abstract class FundRefreshHandler extends DefaultTableModel{
-    private static String[] columnNames = {"编码", "基金名称", "估算净值", "估算涨跌", "更新时间", "当日净值"};
+public abstract class FundRefreshHandler extends DefaultTableModel {
+    private static String[] columnNames;
 
     private JTable table;
     private boolean colorful = true;
+
+    static {
+        PropertiesComponent instance = PropertiesComponent.getInstance();
+        if (instance.getValue(WindowUtils.FUND_TABLE_HEADER_KEY) == null) {
+            instance.setValue(WindowUtils.FUND_TABLE_HEADER_KEY, WindowUtils.FUND_TABLE_HEADER_VALUE);
+        }
+
+        columnNames = Objects.requireNonNull(instance.getValue(WindowUtils.FUND_TABLE_HEADER_KEY)).split(",");
+    }
 
 
     public FundRefreshHandler(JTable table) {
@@ -35,7 +48,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
     }
 
     public void refreshColorful(boolean colorful) {
-        if (this.colorful == colorful){
+        if (this.colorful == colorful) {
             return;
         }
         this.colorful = colorful;
@@ -80,9 +93,10 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
 
     /**
      * 按照编码顺序初始化，for 每次刷新都乱序，没办法控制显示顺序
+     *
      * @param code
      */
-    public void setupTable(List<String> code){
+    public void setupTable(List<String> code) {
         for (String s : code) {
             updateData(new FundBean(s));
         }
@@ -105,15 +119,15 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
 
                 }
                 if (temp > 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.RED);
-                    }else {
+                    } else {
                         setForeground(JBColor.DARK_GRAY);
                     }
                 } else if (temp < 0) {
-                    if (colorful){
+                    if (colorful) {
                         setForeground(JBColor.GREEN);
-                    }else {
+                    } else {
                         setForeground(JBColor.GRAY);
                     }
                 } else if (temp == 0) {
@@ -124,19 +138,21 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
             }
         };
 //        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
-        table.getColumn(getColumnName(3)).setCellRenderer(cellRenderer);
+        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "估算涨跌");
+        table.getColumn(getColumnName(columnIndex)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(FundBean bean) {
-        if (bean.getFundCode() == null){
+        if (bean.getFundCode() == null) {
             return;
         }
         Vector<Object> convertData = convertData(bean);
-        if (convertData==null){
+        if (convertData == null) {
             return;
         }
         // 获取行
-        int index = findRowIndex(0, bean.getFundCode());
+        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "编码");
+        int index = findRowIndex(columnIndex, bean.getFundCode());
         if (index >= 0) {
             updateRow(index, convertData);
         } else {
@@ -187,30 +203,14 @@ public abstract class FundRefreshHandler extends DefaultTableModel{
     }
 
     private Vector<Object> convertData(FundBean fundBean) {
-        if (fundBean.getFundCode() == null){
+        if (fundBean.getFundCode() == null) {
             return null;
-        }
-        String timeStr = fundBean.getGztime();
-        if(timeStr == null){
-            timeStr = "--";
-        }
-        String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
-        if (timeStr.startsWith(today)) {
-            timeStr = timeStr.substring(timeStr.indexOf(" "));
-        }
-        String gszzlStr = "--";
-        String gszzl = fundBean.getGszzl();
-        if (gszzl !=null){
-            gszzlStr= gszzl.startsWith("-")? gszzl :"+"+ gszzl;
         }
         // 与columnNames中的元素保持一致
         Vector<Object> v = new Vector<Object>(columnNames.length);
-        v.addElement(fundBean.getFundCode());
-        v.addElement(colorful ? fundBean.getFundName() : PinYinUtils.toPinYin(fundBean.getFundName()));
-        v.addElement(fundBean.getGsz());
-        v.addElement( gszzlStr+"%");
-        v.addElement(timeStr);
-        v.addElement(fundBean.getDwjz()+"["+fundBean.getJzrq()+"]");
+        for (int i = 0; i < columnNames.length; i++) {
+            v.addElement(fundBean.getValueByColumn(columnNames[i], colorful));
+        }
         return v;
     }
 
