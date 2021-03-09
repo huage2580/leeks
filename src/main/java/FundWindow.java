@@ -21,12 +21,14 @@ import org.jetbrains.annotations.Nullable;
 import utils.LogUtil;
 import handler.TianTianFundHandler;
 import utils.PopupsUiUtil;
+import utils.WindowUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.util.*;
 import java.util.List;
@@ -79,6 +81,24 @@ public class FundWindow implements ToolWindowFactory {
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         JBTable table = new JBTable();
+        //记录列名的变化
+        table.getTableHeader().addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                String[] tableHeadChange = new String[table.getColumnCount()];
+                for (int i = 0; i < table.getColumnCount(); i++) {
+                    tableHeadChange[i] = table.getColumnName(i);
+                }
+                PropertiesComponent instance = PropertiesComponent.getInstance();
+                //将列名的修改放入环境中 key:fund_table_header_key
+                instance.setValue(WindowUtils.FUND_TABLE_HEADER_KEY, Arrays.toString(tableHeadChange)
+                        .substring(1, Arrays.toString(tableHeadChange).length() - 1)
+                        .replaceAll(" ", ""));
+
+                //LogUtil.info(instance.getValue(WindowUtils.FUND_TABLE_HEADER_KEY));
+            }
+
+        });
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

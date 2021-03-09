@@ -1,5 +1,9 @@
 package bean;
 
+import utils.PinYinUtils;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class StockBean {
@@ -101,5 +105,48 @@ public class StockBean {
     @Override
     public int hashCode() {
         return Objects.hash(code);
+    }
+
+
+    /**
+     * 返回列名的VALUE 用作展示
+     * @param colums 字段名
+     * @param colorful 隐蔽模式
+     * @return 对应列名的VALUE值 无法匹配返回""
+     */
+    public String getValueByColumn(String colums, boolean colorful) {
+        switch (colums) {
+            case "编码":
+                return this.getCode();
+            case "股票名称":
+                return colorful ? this.getName() : PinYinUtils.toPinYin(this.getName());
+            case "当前价":
+                return this.getNow();
+            case "涨跌":
+                String changeStr = "--";
+                if (this.getChange() != null) {
+                    changeStr = this.getChange().startsWith("-") ? this.getChange() : "+" + this.getChange();
+                }
+                return changeStr;
+            case "涨跌幅":
+                String changePercentStr = "--";
+                if (this.getChangePercent() != null) {
+                    changePercentStr = this.getChangePercent().startsWith("-") ? this.getChangePercent() : "+" + this.getChangePercent();
+                }
+                return changePercentStr + "%";
+            case "最高价":
+                return this.getMax();
+            case "最低价":
+                return this.getMin() ;
+            case "更新时间":
+                String timeStr = "--";
+                if (this.getTime() != null) {
+                    timeStr = this.getTime().substring(8);
+                }
+                return timeStr;
+            default:
+                return "";
+
+        }
     }
 }

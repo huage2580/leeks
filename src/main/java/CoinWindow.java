@@ -8,10 +8,14 @@ import com.intellij.ui.table.JBTable;
 import handler.CoinRefreshHandler;
 import handler.SinaCoinHandler;
 import org.jetbrains.annotations.NotNull;
+import utils.WindowUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.Arrays;
 import java.util.List;
 
 public class CoinWindow {
@@ -31,6 +35,23 @@ public class CoinWindow {
         refreshTimeLabel.setToolTipText("最后刷新时间");
         refreshTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         table = new JBTable();
+        //记录列名的变化
+        table.getTableHeader().addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                String[] tableHeadChange = new String[table.getColumnCount()];
+                for (int i = 0; i < table.getColumnCount(); i++) {
+                    tableHeadChange[i] = table.getColumnName(i);
+                }
+                PropertiesComponent instance = PropertiesComponent.getInstance();
+                //将列名的修改放入环境中 key:coin_table_header_key
+                instance.setValue(WindowUtils.COIN_TABLE_HEADER_KEY, Arrays.toString(tableHeadChange)
+                        .substring(1, Arrays.toString(tableHeadChange).length() - 1)
+                        .replaceAll(" ", ""));
+
+                //LogUtil.info(instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY));
+            }
+        });
     }
 
     public CoinWindow() {
