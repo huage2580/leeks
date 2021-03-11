@@ -32,8 +32,11 @@ public abstract class FundRefreshHandler extends DefaultTableModel {
         if (instance.getValue(WindowUtils.FUND_TABLE_HEADER_KEY) == null) {
             instance.setValue(WindowUtils.FUND_TABLE_HEADER_KEY, WindowUtils.FUND_TABLE_HEADER_VALUE);
         }
-
-        columnNames = Objects.requireNonNull(instance.getValue(WindowUtils.FUND_TABLE_HEADER_KEY)).split(",");
+        String[] configStr = Objects.requireNonNull(instance.getValue(WindowUtils.FUND_TABLE_HEADER_KEY)).split(",");
+        columnNames = new String[configStr.length];
+        for (int i = 0; i < configStr.length; i++) {
+            columnNames[i] = WindowUtils.remapPinYin(configStr[i]);
+        }
     }
 
 

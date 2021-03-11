@@ -28,7 +28,11 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
             instance.setValue(WindowUtils.COIN_TABLE_HEADER_KEY, WindowUtils.COIN_TABLE_HEADER_VALUE);
         }
 
-        columnNames = Objects.requireNonNull(instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY)).split(",");
+        String[] configStr = Objects.requireNonNull(instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY)).split(",");
+        columnNames = new String[configStr.length];
+        for (int i = 0; i < configStr.length; i++) {
+            columnNames[i] = WindowUtils.remapPinYin(configStr[i]);
+        }
     }
 
     /**

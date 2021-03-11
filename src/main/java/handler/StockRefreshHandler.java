@@ -30,7 +30,11 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
             instance.setValue(WindowUtils.STOCK_TABLE_HEADER_KEY, WindowUtils.STOCK_TABLE_HEADER_VALUE);
         }
 
-        columnNames = Objects.requireNonNull(instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY)).split(",");
+        String[] configStr = Objects.requireNonNull(instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY)).split(",");
+        columnNames = new String[configStr.length];
+        for (int i = 0; i < configStr.length; i++) {
+            columnNames[i] = WindowUtils.remapPinYin(configStr[i]);
+        }
     }
 
     /**
