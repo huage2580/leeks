@@ -4,6 +4,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import bean.StockBean;
 import utils.PinYinUtils;
 import utils.WindowUtils;
@@ -13,9 +14,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Vector;
 
 public abstract class StockRefreshHandler extends DefaultTableModel {
@@ -26,11 +27,13 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
 
     static {
         PropertiesComponent instance = PropertiesComponent.getInstance();
-        if (instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY) == null) {
+        String tableHeaderValue = instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY);
+        if (StringUtils.isBlank(tableHeaderValue)) {
             instance.setValue(WindowUtils.STOCK_TABLE_HEADER_KEY, WindowUtils.STOCK_TABLE_HEADER_VALUE);
+            tableHeaderValue = WindowUtils.STOCK_TABLE_HEADER_VALUE;
         }
 
-        String[] configStr = Objects.requireNonNull(instance.getValue(WindowUtils.STOCK_TABLE_HEADER_KEY)).split(",");
+        String[] configStr = tableHeaderValue.split(",");
         columnNames = new String[configStr.length];
         for (int i = 0; i < configStr.length; i++) {
             columnNames[i] = WindowUtils.remapPinYin(configStr[i]);
@@ -64,16 +67,13 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
             setColumnIdentifiers(PinYinUtils.toPinYin(columnNames));
         }
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(this);
-        Comparator<Object> dobleComparator = (o1, o2) -> {
-            Double v1 = Double.parseDouble(StringUtils.remove((String) o1, '%'));
-            Double v2 = Double.parseDouble(StringUtils.remove((String) o2, '%'));
+        Comparator<Object> doubleComparator = (o1, o2) -> {
+            Double v1 = NumberUtils.toDouble(StringUtils.remove((String) o1, '%'));
+            Double v2 = NumberUtils.toDouble(StringUtils.remove((String) o2, '%'));
             return v1.compareTo(v2);
         };
-        rowSorter.setComparator(2, dobleComparator);
-        rowSorter.setComparator(3, dobleComparator);
-        rowSorter.setComparator(4, dobleComparator);
-        rowSorter.setComparator(5, dobleComparator);
-        rowSorter.setComparator(6, dobleComparator);
+        Arrays.stream("当前价,涨跌,涨跌幅,最高价,最低价".split(",")).map(name -> WindowUtils.getColumnIndexByName(columnNames, name))
+                .filter(index -> index >= 0).forEach(index -> rowSorter.setComparator(index, doubleComparator));
         table.setRowSorter(rowSorter);
         columnColors(colorful);
     }
@@ -114,13 +114,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                double temp = 0.0;
-                try {
-                    String s = value.toString().replace("%", "");
-                    temp = Double.parseDouble(s);
-                } catch (Exception e) {
-
-                }
+                double temp = NumberUtils.toDouble(StringUtils.remove(value.toString(), "%"));
                 if (temp > 0) {
                     if (colorful) {
                         setForeground(JBColor.RED);

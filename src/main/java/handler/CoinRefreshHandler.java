@@ -4,6 +4,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import bean.CoinBean;
 import utils.PinYinUtils;
 import utils.WindowUtils;
@@ -13,7 +14,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.Vector;
 
 public abstract class CoinRefreshHandler extends DefaultTableModel {
@@ -24,11 +24,13 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
 
     static {
         PropertiesComponent instance = PropertiesComponent.getInstance();
-        if (instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY) == null) {
+        String tableHeader = instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY);
+        if (StringUtils.isBlank(tableHeader)) {
             instance.setValue(WindowUtils.COIN_TABLE_HEADER_KEY, WindowUtils.COIN_TABLE_HEADER_VALUE);
+            tableHeader = WindowUtils.COIN_TABLE_HEADER_VALUE;
         }
 
-        String[] configStr = Objects.requireNonNull(instance.getValue(WindowUtils.COIN_TABLE_HEADER_KEY)).split(",");
+        String[] configStr = tableHeader.split(",");
         columnNames = new String[configStr.length];
         for (int i = 0; i < configStr.length; i++) {
             columnNames[i] = WindowUtils.remapPinYin(configStr[i]);
@@ -101,13 +103,7 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                double temp = 0.0;
-                try {
-                    String s = value.toString().replace("%", "");
-                    temp = Double.parseDouble(s);
-                } catch (Exception e) {
-
-                }
+                double temp = NumberUtils.toDouble(StringUtils.remove(value.toString(), "%"));
                 if (temp > 0) {
                     if (colorful) {
                         setForeground(JBColor.RED);

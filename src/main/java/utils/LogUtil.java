@@ -9,6 +9,10 @@ import com.intellij.openapi.ui.MessageType;
 public class LogUtil {
     private static Project project;
 
+    public static Project getProject() {
+        return project;
+    }
+
     public static void setProject(Project project) {
         LogUtil.project = project;
     }
