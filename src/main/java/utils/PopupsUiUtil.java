@@ -115,7 +115,7 @@ public class PopupsUiUtil {
                 label.setText(null);
             }
         }
-        tabs.addListener(new TabsListener() {
+        tabs.addListener(new TabsListener.Adapter() {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 JComponent component = newSelection.getComponent();

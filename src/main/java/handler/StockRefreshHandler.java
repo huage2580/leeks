@@ -14,10 +14,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 public abstract class StockRefreshHandler extends DefaultTableModel {
     private static String[] columnNames;
@@ -114,7 +112,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                double temp = NumberUtils.toDouble(StringUtils.remove(value.toString(), "%"));
+                double temp = NumberUtils.toDouble(StringUtils.remove(Objects.toString(value), "%"));
                 if (temp > 0) {
                     if (colorful) {
                         setForeground(JBColor.RED);

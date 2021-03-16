@@ -1,7 +1,6 @@
 package handler;
 
 import com.google.common.base.Joiner;
-import org.apache.commons.collections.CollectionUtils;
 import bean.CoinBean;
 import utils.HttpClientPool;
 import utils.LogUtil;
@@ -29,7 +28,7 @@ public class SinaCoinHandler extends CoinRefreshHandler {
 
     @Override
     public void handle(List<String> code) {
-        if (CollectionUtils.isEmpty(code)) {
+        if (code.isEmpty()) {
             return;
         }
 
