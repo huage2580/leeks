@@ -116,6 +116,7 @@ public class PopupsUiUtil {
             }
         }
         tabs.addListener(new TabsListener.Adapter() {
+            // 兼容到2017，请勿修改
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 JComponent component = newSelection.getComponent();

@@ -85,15 +85,14 @@ public class FundWindow implements ToolWindowFactory {
         table.getTableHeader().addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                String[] tableHeadChange = new String[table.getColumnCount()];
+                StringBuilder tableHeadChange = new StringBuilder();
                 for (int i = 0; i < table.getColumnCount(); i++) {
-                    tableHeadChange[i] = table.getColumnName(i);
+                    tableHeadChange.append(table.getColumnName(i)).append(",");
                 }
                 PropertiesComponent instance = PropertiesComponent.getInstance();
                 //将列名的修改放入环境中 key:fund_table_header_key
-                instance.setValue(WindowUtils.FUND_TABLE_HEADER_KEY, Arrays.toString(tableHeadChange)
-                        .substring(1, Arrays.toString(tableHeadChange).length() - 1)
-                        .replaceAll(" ", ""));
+                instance.setValue(WindowUtils.FUND_TABLE_HEADER_KEY, tableHeadChange
+                        .substring(0, tableHeadChange.length() > 0 ? tableHeadChange.length() - 1 : 0));
 
                 //LogUtil.info(instance.getValue(WindowUtils.FUND_TABLE_HEADER_KEY));
             }
