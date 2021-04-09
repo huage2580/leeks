@@ -2,7 +2,6 @@ package handler;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import org.apache.commons.collections.CollectionUtils;
 import bean.StockBean;
 import utils.HttpClientPool;
 import utils.LogUtil;
@@ -32,7 +31,7 @@ public class SinaStockHandler extends StockRefreshHandler {
 
     @Override
     public void handle(List<String> code) {
-        if (CollectionUtils.isEmpty(code)) {
+        if (code.isEmpty()) {
             return;
         }
 

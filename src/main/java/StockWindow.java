@@ -107,7 +107,7 @@ public class StockWindow {
         //切换接口
         handler = factoryHandler();
 
-        AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
+        AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.Pause) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
                 handler.stopHandle();

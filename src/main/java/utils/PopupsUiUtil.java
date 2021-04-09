@@ -1,8 +1,10 @@
 package utils;
 
-import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.TabsListener;
+import com.intellij.ui.tabs.impl.JBTabsImpl;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -26,18 +28,25 @@ public class PopupsUiUtil {
         // 带水印  http://j4.dfcfw.com/charts/pic6/590008.png
         // 无水印  http://j4.dfcfw.com/charts/pic7/590008.png
         // 暂时先硬编码，后续再优化调整
-        URL url = new URL(String.format("http://j4.dfcfw.com/charts/pic7/%s.png?%s", fundCode, System.currentTimeMillis()));
-        showImage(url, type.getDesc(), showByPoint);
+        TabInfo tabInfo = new TabInfo(new JLabel(new ImageIcon(new URL(String.format("http://j4.dfcfw.com/charts/pic7/%s.png?%s",
+                fundCode, System.currentTimeMillis())))));
+        tabInfo.setText(type.getDesc());
+        JBTabsImpl tabs = new JBTabsImpl(LogUtil.getProject());
+        tabs.addTab(tabInfo);
+        JBPopupFactory.getInstance().createComponentPopupBuilder(tabs, null)
+                .setMovable(true)
+                .setRequestFocus(true)
+                .createPopup().show(RelativePoint.fromScreen(showByPoint));
     }
 
     /**
-     * 弹窗展示图片
+     * 获取图片链接
      *
-     * @param stockCode   股票编码
-     * @param type        展示类型
-     * @param showByPoint 窗口显示位置
+     * @param stockCode 股票编码
+     * @param type      枚举类型
+     * @return 可能为null
      */
-    public static void showImageByStockCode(String stockCode, StockShowType type, Point showByPoint) throws MalformedURLException {
+    public static String getImageUrlByStock(String stockCode, StockShowType type) throws MalformedURLException {
         String prefix = StringUtils.substring(stockCode, 0, 2);
         String url = "http://image.sinajs.cn/newchart/";
         switch (prefix) {
@@ -79,32 +88,60 @@ public class PopupsUiUtil {
                 }
                 break;
             default:
-                return;
+                return "";
         }
-
-        // 暂时先硬编码，后续再优化调整
-        showImage(new URL(url), type.getDesc(), showByPoint);
+        return url;
     }
 
     /**
      * 弹窗展示图片
      *
-     * @param imageUrl    图片路径
-     * @param title       窗口标题
+     * @param stockCode   编码
+     * @param selectType  展示的类型
      * @param showByPoint 窗口显示位置
      */
-    public static void showImage(URL imageUrl, String title, Point showByPoint) {
-        JLabel image = new JLabel(new ImageIcon(imageUrl));
-        JBPopupFactory instance = JBPopupFactory.getInstance();
-        JBPopup jbPopup = instance.createComponentPopupBuilder(image, null)
-                .setTitle(title)
+    public static void showImageByStockCode(String stockCode, StockShowType selectType, Point showByPoint) throws MalformedURLException {
+        JBTabsImpl tabs = new JBTabsImpl(LogUtil.getProject());
+        for (StockShowType type : StockShowType.values()) {
+            String imageUrlByStock = getImageUrlByStock(stockCode, type);
+            JLabel label = new JLabel(imageUrlByStock);
+            TabInfo tabInfo = new TabInfo(label);
+            // 先存图片路径后续再转换为图片，避免图片网络延迟影响ui
+            tabInfo.setText(type.getDesc());
+            tabs.addTab(tabInfo);
+            if (type.equals(selectType)) {
+                tabs.select(tabInfo, true);
+                label.setIcon(new ImageIcon(new URL(imageUrlByStock)));
+                label.setText(null);
+            }
+        }
+        tabs.addListener(new TabsListener.Adapter() {
+            @Override
+            public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
+                JComponent component = newSelection.getComponent();
+                if (component instanceof JLabel) {
+                    JLabel label = (JLabel) component;
+                    if (StringUtils.isNotBlank(label.getText())) {
+                        try {
+                            label.setIcon(new ImageIcon(new URL(label.getText())));
+                            label.setText(null);
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+        JBPopupFactory.getInstance().createComponentPopupBuilder(tabs, null)
                 .setMovable(true)
                 .setRequestFocus(true)
-                .createPopup();
-        jbPopup.show(RelativePoint.fromScreen(showByPoint));
+                .createPopup().show(RelativePoint.fromScreen(showByPoint));
     }
 
     public enum FundShowType {
+        /**
+         * 净值估算图
+         */
         gsz("净值估算图");
         private String desc;
 

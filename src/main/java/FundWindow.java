@@ -137,7 +137,7 @@ public class FundWindow implements ToolWindowFactory {
             }
         });
         fundRefreshHandler = new TianTianFundHandler(table, refreshTimeLabel);
-        AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.StopRefresh) {
+        AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.Pause) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
                 fundRefreshHandler.stopHandle();
