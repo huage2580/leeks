@@ -3,7 +3,7 @@ package handler;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import bean.FundBean;
 import org.jetbrains.annotations.Nullable;
 import utils.PinYinUtils;
