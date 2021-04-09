@@ -19,6 +19,10 @@ import java.util.List;
 
 public abstract class StockRefreshHandler extends DefaultTableModel {
     private static String[] columnNames;
+    /**
+     * 存放【编码】的位置，更新数据时用到
+     */
+    private int codeColumnIndex;
 
     private JTable table;
     private boolean colorful = true;
@@ -35,6 +39,14 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         columnNames = new String[configStr.length];
         for (int i = 0; i < configStr.length; i++) {
             columnNames[i] = WindowUtils.remapPinYin(configStr[i]);
+        }
+    }
+
+    {
+        for (int i = 0; i < columnNames.length; i++) {
+            if ("编码".equals(columnNames[i])) {
+                codeColumnIndex = i;
+            }
         }
     }
 
@@ -147,8 +159,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
             return;
         }
         // 获取行
-        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "编码");
-        int index = findRowIndex(columnIndex, bean.getCode());
+        int index = findRowIndex(codeColumnIndex, bean.getCode());
         if (index >= 0) {
             updateRow(index, convertData);
         } else {

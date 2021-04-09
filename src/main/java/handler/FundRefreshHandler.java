@@ -19,6 +19,10 @@ import java.util.List;
 
 public abstract class FundRefreshHandler extends DefaultTableModel {
     private static String[] columnNames;
+    /**
+     * 存放【编码】的位置，更新数据时用到
+     */
+    private int codeColumnIndex;
 
     private JTable table;
     private boolean colorful = true;
@@ -37,6 +41,13 @@ public abstract class FundRefreshHandler extends DefaultTableModel {
         }
     }
 
+    {
+        for (int i = 0; i < columnNames.length; i++) {
+            if ("编码".equals(columnNames[i])) {
+                codeColumnIndex = i;
+            }
+        }
+    }
 
     public FundRefreshHandler(JTable table) {
         this.table = table;
@@ -146,8 +157,7 @@ public abstract class FundRefreshHandler extends DefaultTableModel {
             return;
         }
         // 获取行
-        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "编码");
-        int index = findRowIndex(columnIndex, bean.getFundCode());
+        int index = findRowIndex(codeColumnIndex, bean.getFundCode());
         if (index >= 0) {
             updateRow(index, convertData);
         } else {
