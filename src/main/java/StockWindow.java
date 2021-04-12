@@ -66,7 +66,7 @@ public class StockWindow {
             public void mousePressed(MouseEvent e) {
                 if (table.getSelectedRow() < 0)
                     return;
-                String code = String.valueOf(table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()), 0));
+                String code = String.valueOf(table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()), handler.codeColumnIndex));//FIX 移动列导致的BUG
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
                     // 鼠标左键双击
                     try {

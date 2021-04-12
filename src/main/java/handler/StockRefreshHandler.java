@@ -22,7 +22,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     /**
      * 存放【编码】的位置，更新数据时用到
      */
-    private int codeColumnIndex;
+    public int codeColumnIndex;
 
     private JTable table;
     private boolean colorful = true;
