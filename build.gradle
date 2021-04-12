@@ -34,8 +34,8 @@ patchPluginXml {
         v1.6 样式修改，增加精确净值（当日，上一交易日
         v1.7 设置界面样式调整，增加新浪股票接口备选
       """
-    sinceBuild '173.*'
-    untilBuild '203.*'
+    sinceBuild '173.*' //最低版本限制
+    //untilBuild '203.*' 最高版本限制
 }
 
 tasks.withType(JavaCompile) {
