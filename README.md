@@ -65,9 +65,12 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 - v1.8.3  
 增加了分时图和K线图 merge from [dengerYang](https://github.com/dengerYang)  
 - V1.8.4  
-bug fix from [DAIE](https://github.com/DA1Y1)
+bug fix from [DAIE](https://github.com/DA1Y1)  
 - V1.8.5  
 保存表头顺序 from [DAIE](https://github.com/DA1Y1)  
+- V1.9.1  
+图表界面优化 from [dengerYang](https://github.com/dengerYang)  
+
 
 
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.huage2580'
-version '1.8.6'
+version '1.9.1'
 
 sourceCompatibility = 1.8
 
