@@ -35,7 +35,7 @@ patchPluginXml {
         v1.7 设置界面样式调整，增加新浪股票接口备选
       """
     sinceBuild '173.*' //最低版本限制
-    //untilBuild '203.*' 最高版本限制
+    untilBuild '333.*' //最高版本限制 好像必须指定
 }
 
 tasks.withType(JavaCompile) {
