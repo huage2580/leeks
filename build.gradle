@@ -20,7 +20,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2020.1.3'
+    version '2021.1.1'
     intellij.updateSinceUntilBuild true
     intellij.sameSinceUntilBuild false
 }
@@ -35,7 +35,7 @@ patchPluginXml {
         v1.7 设置界面样式调整，增加新浪股票接口备选
       """
     sinceBuild '173.*' //最低版本限制
-    untilBuild '333.*' //最高版本限制 好像必须指定
+    untilBuild null //最高版本限制 好像必须指定
 }
 
 tasks.withType(JavaCompile) {
