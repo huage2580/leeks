@@ -67,7 +67,7 @@ public class StockWindow {
                 if (table.getSelectedRow() < 0)
                     return;
                 String code = String.valueOf(table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()), handler.codeColumnIndex));//FIX 移动列导致的BUG
-                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1) {
                     // 鼠标左键双击
                     try {
                         PopupsUiUtil.showImageByStockCode(code, PopupsUiUtil.StockShowType.min, new Point(e.getXOnScreen(), e.getYOnScreen()));
@@ -75,7 +75,7 @@ public class StockWindow {
                         ex.printStackTrace();
                         LogUtil.info(ex.getMessage());
                     }
-                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                } else if (SwingUtilities.isRightMouseButton(e)) {
                     //鼠标右键
                     JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PopupsUiUtil.StockShowType>("",
                             PopupsUiUtil.StockShowType.values()) {
