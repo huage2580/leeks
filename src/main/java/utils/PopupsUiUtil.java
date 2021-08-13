@@ -127,7 +127,7 @@ public class PopupsUiUtil {
                 label.setText(null);
             }
         }
-        tabs.addListener(new TabsListener.Adapter() {
+        tabs.addListener(new TabsListener() {
             // 兼容到2017，请勿修改
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {

@@ -1,8 +1,8 @@
 package utils;
 
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 
@@ -31,7 +31,14 @@ public class LogUtil {
     public static void info(String text){
         boolean closeLog = PropertiesComponent.getInstance().getBoolean("key_close_log");
         if (!closeLog){
+//            PluginManager.getLogger().info(text);
             new NotificationGroup("Gradle sync", NotificationDisplayType.NONE, true).createNotification(text, MessageType.INFO).notify(getProject());
         }
+    }
+
+    public static void notify(String text,boolean success){
+        NotificationGroupManager.getInstance().getNotificationGroup("Leeks Notification Group")
+                .createNotification(text, success?NotificationType.INFORMATION:NotificationType.WARNING)
+                .notify(getProject());
     }
 }

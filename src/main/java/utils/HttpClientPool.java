@@ -1,5 +1,6 @@
 package utils;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -7,6 +8,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
@@ -38,12 +40,25 @@ public class HttpClientPool {
     }
 
     private HttpClientPool() {
+        buildHttpClient(null);
+    }
+
+    public void buildHttpClient(String proxyStr){
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(100, TimeUnit.SECONDS);
         connectionManager.setMaxTotal(200);// 连接池
         connectionManager.setDefaultMaxPerRoute(100);// 每条通道的并发连接数
-
         RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(2000).setSocketTimeout(2000).build();
-        httpClient = HttpClients.custom().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig).build();
+        HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
+        if (proxyStr!=null && !proxyStr.isEmpty()){
+            String[] s = proxyStr.split(":");
+            if (s.length == 2){
+                String host = s[0];
+                int port = Integer.parseInt(s[1]);
+                httpClientBuilder.setProxy(new HttpHost(host,port));
+            }
+            LogUtil.info("Leeks setup proxy success->"+proxyStr);
+        }
+        httpClient =httpClientBuilder.setDefaultRequestConfig(requestConfig).build();
     }
 
     public String get(String url) throws Exception {

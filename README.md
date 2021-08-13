@@ -31,6 +31,9 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 基金只有估值分时图，股票提供分时图，日周月K线图，非图表，不能进行操作，不会自动刷新。  
 在表格中双击行即可打开分时图，右键弹出菜单选择K线图。  
 
+### 代理  
+插件不会使用系统或者IDEA的代理，请前往插件设置页设置代理。格式为`127.0.0.1:1080` 这样子。K线图那些不会走代理  
+
 
 ## 预览
 ![da](./img1.png)
@@ -74,6 +77,8 @@ bug fix from [DAIE](https://github.com/DA1Y1)
 保存表头顺序 from [DAIE](https://github.com/DA1Y1)  
 - V1.9.1  
 图表界面优化 from [dengerYang](https://github.com/dengerYang)  
+- V1.9.3  
+加入代理设置
 
 
 

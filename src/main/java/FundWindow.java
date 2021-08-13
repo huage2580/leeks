@@ -18,6 +18,7 @@ import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import utils.HttpClientPool;
 import utils.LogUtil;
 import handler.TianTianFundHandler;
 import utils.PopupsUiUtil;
@@ -41,6 +42,8 @@ public class FundWindow implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+        //先加载代理
+        loadProxySetting();
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(mPanel, "Fund", false);
@@ -65,6 +68,11 @@ public class FundWindow implements ToolWindowFactory {
 //                }
 //            }
 //        });
+    }
+
+    private void loadProxySetting() {
+        String proxyStr = PropertiesComponent.getInstance().getValue("key_proxy");
+        HttpClientPool.getHttpClient().buildHttpClient(proxyStr);
     }
 
     @Override

@@ -20,6 +20,7 @@
         <!-- Add your extensions here -->
         <toolWindow anchor="left" id="leeks" factoryClass="FundWindow"/>
         <applicationConfigurable id="leeks_settings" instance="SettingsWindow"/>
+        <notificationGroup id="Leeks Notification Group" displayType="BALLOON"/>
     </extensions>
 
     <actions>
