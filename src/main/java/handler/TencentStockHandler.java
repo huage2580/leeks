@@ -1,11 +1,13 @@
 package handler;
 
-import org.apache.commons.lang.StringUtils;
 import bean.StockBean;
+import bean.StockPriceLimitBean;
+import org.apache.commons.lang.StringUtils;
 import utils.HttpClientPool;
 import utils.LogUtil;
 
 import javax.swing.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,18 +26,18 @@ public class TencentStockHandler extends StockRefreshHandler {
     @Override
     public void handle(List<String> code) {
 
-        if (worker!=null){
+        if (worker != null) {
             worker.interrupt();
         }
         LogUtil.info("Leeks 更新Stock编码数据.");
 //        clearRow();
-        if (code.isEmpty()){
+        if (code.isEmpty()) {
             return;
         }
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()){
+                while (worker != null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()) {
                     stepAction();
                     try {
                         Thread.sleep(threadSleepTime * 1000);
@@ -70,11 +72,11 @@ public class TencentStockHandler extends StockRefreshHandler {
 //            }
 //            return;
 //        }
-        if (StringUtils.isEmpty(urlPara)){
+        if (StringUtils.isEmpty(urlPara)) {
             return;
         }
         try {
-            String result = HttpClientPool.getHttpClient().get("http://qt.gtimg.cn/q="+urlPara);
+            String result = HttpClientPool.getHttpClient().get("http://qt.gtimg.cn/q=" + urlPara);
             parse(result);
             updateUI();
         } catch (Exception e) {
@@ -85,8 +87,8 @@ public class TencentStockHandler extends StockRefreshHandler {
     private void parse(String result) {
         String[] lines = result.split("\n");
         for (String line : lines) {
-            String code = line.substring(line.indexOf("_")+1,line.indexOf("="));
-            String dataStr = line.substring(line.indexOf("=")+2,line.length()-2);
+            String code = line.substring(line.indexOf("_") + 1, line.indexOf("="));
+            String dataStr = line.substring(line.indexOf("=") + 2, line.length() - 2);
             String[] values = dataStr.split("~");
             StockBean bean = new StockBean(code);
             bean.setName(values[1]);
@@ -97,6 +99,14 @@ public class TencentStockHandler extends StockRefreshHandler {
             bean.setMax(values[33]);//33
             bean.setMin(values[34]);//34
             updateData(bean);
+
+            if (null != previousPrice) {
+                StockPriceLimitBean stockPriceLimitBean = stockPriceLimitBeanMap.get(code);
+                BigDecimal previous = new BigDecimal(previousPrice);
+                priceTip(previous, new BigDecimal(values[3]), stockPriceLimitBean);
+            }
+
+            previousPrice = values[3];
         }
     }
 

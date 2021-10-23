@@ -1,8 +1,9 @@
 package handler;
 
+import bean.StockBean;
+import bean.StockPriceLimitBean;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import bean.StockBean;
 import utils.HttpClientPool;
 import utils.LogUtil;
 
@@ -39,7 +40,7 @@ public class SinaStockHandler extends StockRefreshHandler {
     }
 
     public void useScheduleThreadExecutor(List<String> code) {
-        if (mSchedulerExecutor.isShutdown()){
+        if (mSchedulerExecutor.isShutdown()) {
             mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
         }
         mSchedulerExecutor.scheduleAtFixedRate(getWork(code), 0, threadSleepTime, TimeUnit.SECONDS);
@@ -93,6 +94,14 @@ public class SinaStockHandler extends StockRefreshHandler {
             bean.setMin(split[5]);
             updateData(bean);
             refreshTimeList.add(split[31]);
+
+            if (null != previousPrice) {
+                StockPriceLimitBean stockPriceLimitBean = stockPriceLimitBeanMap.get(code);
+                BigDecimal previous = new BigDecimal(previousPrice);
+                priceTip(previous, now, stockPriceLimitBean);
+            }
+
+            previousPrice = now.toString();
         }
 
         String text = refreshTimeList.stream().sorted().findFirst().orElse("");

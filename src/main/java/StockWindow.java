@@ -1,3 +1,4 @@
+import bean.StockPriceLimitBean;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
@@ -9,10 +10,11 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.JBTable;
-import org.jetbrains.annotations.NotNull;
 import handler.SinaStockHandler;
 import handler.StockRefreshHandler;
 import handler.TencentStockHandler;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import utils.LogUtil;
 import utils.PopupsUiUtil;
@@ -26,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StockWindow {
     private JPanel mPanel;
@@ -98,6 +101,7 @@ public class StockWindow {
                 }
             }
         });
+
     }
 
     public StockWindow() {
@@ -124,30 +128,30 @@ public class StockWindow {
                 .setToolbarPosition(ActionToolbarPosition.TOP);
         JPanel toolPanel = toolbarDecorator.createPanel();
         toolbarDecorator.getActionsPanel().add(refreshTimeLabel, BorderLayout.EAST);
-        toolPanel.setBorder(new EmptyBorder(0,0,0,0));
+        toolPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
         mPanel.add(toolPanel, BorderLayout.CENTER);
         // 非主要tab，需要创建，创建时立即应用数据
         apply();
     }
 
-    private static StockRefreshHandler factoryHandler(){
+    private static StockRefreshHandler factoryHandler() {
         boolean useSinaApi = PropertiesComponent.getInstance().getBoolean("key_stocks_sina");
-        if (useSinaApi){
-            if (handler instanceof SinaStockHandler){
+        if (useSinaApi) {
+            if (handler instanceof SinaStockHandler) {
                 return handler;
             }
-            if (handler!=null){
+            if (handler != null) {
                 handler.stopHandle();
             }
             return new SinaStockHandler(table, refreshTimeLabel);
         }
-        if (handler instanceof TencentStockHandler){
+        if (handler instanceof TencentStockHandler) {
             return handler;
         }
-        if (handler!=null){
+        if (handler != null) {
             handler.stopHandle();
         }
-        return  new TencentStockHandler(table, refreshTimeLabel);
+        return new TencentStockHandler(table, refreshTimeLabel);
     }
 
     public static void apply() {
@@ -162,6 +166,7 @@ public class StockWindow {
             handler.handle(loadStocks());
         }
     }
+
     public static void refresh() {
         if (handler != null) {
             boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
@@ -170,8 +175,23 @@ public class StockWindow {
         }
     }
 
-    private static List<String> loadStocks(){
-        return FundWindow.getConfigList("key_stocks", "[,，]");
+    private static List<String> loadStocks() {
+        StockRefreshHandler.stockPriceLimitBeanMap.clear();
+        String value = PropertiesComponent.getInstance().getValue("key_stocks");
+        if (StringUtils.isNotEmpty(value)) {
+            String[] codes = value.split("[;；]");
+            for (String code : codes) {
+                StockPriceLimitBean bean = new StockPriceLimitBean();
+                String[] split = code.split("[,，]");
+                for (int i = 0; i < split.length; i++) {
+                    if (i == 0) bean.setCode(split[i]);
+                    if (i == 1) bean.setMinLimit(split[i]);
+                    if (i == 2) bean.setMaxLimit(split[i]);
+                }
+                StockRefreshHandler.stockPriceLimitBeanMap.put(bean.getCode(), bean);
+            }
+        }
+        return StockRefreshHandler.stockPriceLimitBeanMap.keySet().stream().collect(Collectors.toList());
     }
 
 }

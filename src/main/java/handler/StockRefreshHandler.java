@@ -1,11 +1,13 @@
 package handler;
 
+import bean.StockBean;
+import bean.StockPriceLimitBean;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import bean.StockBean;
+import utils.LogUtil;
 import utils.PinYinUtils;
 import utils.WindowUtils;
 
@@ -14,8 +16,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.*;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.*;
 
 public abstract class StockRefreshHandler extends DefaultTableModel {
     private static String[] columnNames;
@@ -26,6 +29,10 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
 
     private JTable table;
     private boolean colorful = true;
+
+    public static String previousPrice;
+
+    public static Map<String, StockPriceLimitBean> stockPriceLimitBeanMap = new HashMap<>();
 
     static {
         PropertiesComponent instance = PropertiesComponent.getInstance();
@@ -232,5 +239,26 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
 
     public void setThreadSleepTime(int threadSleepTime) {
         this.threadSleepTime = threadSleepTime;
+    }
+
+    public void priceTip(BigDecimal previous, BigDecimal now, StockPriceLimitBean stockPriceLimitBean) {
+        if (null != stockPriceLimitBean.getMinLimit()) {
+            BigDecimal min = new BigDecimal(stockPriceLimitBean.getMinLimit());
+            if (previous.compareTo(min) > 0 && now.compareTo(min) >= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【跌破】地线", true);
+            }
+            if (previous.compareTo(min) < 0 && now.compareTo(min) <= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【突破】地线", true);
+            }
+        }
+        if (null != stockPriceLimitBean.getMaxLimit()) {
+            BigDecimal max = new BigDecimal(stockPriceLimitBean.getMaxLimit());
+            if (previous.compareTo(max) > 0 && now.compareTo(max) >= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【跌破】人线", true);
+            }
+            if (previous.compareTo(max) < 0 && now.compareTo(max) <= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【突破】人线", true);
+            }
+        }
     }
 }
