@@ -95,13 +95,13 @@ public class SinaStockHandler extends StockRefreshHandler {
             updateData(bean);
             refreshTimeList.add(split[31]);
 
+            String previousPrice = previousPriceMap.get(code);
             if (null != previousPrice) {
                 StockPriceLimitBean stockPriceLimitBean = stockPriceLimitBeanMap.get(code);
-                BigDecimal previous = new BigDecimal(previousPrice);
-                priceTip(previous, now, stockPriceLimitBean);
+                priceTip(new BigDecimal(previousPrice), now, stockPriceLimitBean);
             }
 
-            previousPrice = now.toString();
+            previousPriceMap.put(code, now.toString());
         }
 
         String text = refreshTimeList.stream().sorted().findFirst().orElse("");

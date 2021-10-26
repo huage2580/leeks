@@ -100,13 +100,13 @@ public class TencentStockHandler extends StockRefreshHandler {
             bean.setMin(values[34]);//34
             updateData(bean);
 
+            String previousPrice = previousPriceMap.get(code);
             if (null != previousPrice) {
                 StockPriceLimitBean stockPriceLimitBean = stockPriceLimitBeanMap.get(code);
-                BigDecimal previous = new BigDecimal(previousPrice);
-                priceTip(previous, new BigDecimal(values[3]), stockPriceLimitBean);
+                priceTip(new BigDecimal(previousPrice), new BigDecimal(values[3]), stockPriceLimitBean);
             }
 
-            previousPrice = values[3];
+            previousPriceMap.put(code, values[3]);
         }
     }
 

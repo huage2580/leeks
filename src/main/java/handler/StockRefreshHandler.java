@@ -30,7 +30,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     private JTable table;
     private boolean colorful = true;
 
-    public static String previousPrice;
+    public static Map<String, String> previousPriceMap = new HashMap<>();
 
     public static Map<String, StockPriceLimitBean> stockPriceLimitBeanMap = new HashMap<>();
 
@@ -244,20 +244,20 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     public void priceTip(BigDecimal previous, BigDecimal now, StockPriceLimitBean stockPriceLimitBean) {
         if (null != stockPriceLimitBean.getMinLimit()) {
             BigDecimal min = new BigDecimal(stockPriceLimitBean.getMinLimit());
-            if (previous.compareTo(min) > 0 && now.compareTo(min) >= 0) {
-                LogUtil.notify(stockPriceLimitBean.getCode() + "【跌破】地线", true);
+            if (previous.compareTo(min) > 0 && min.compareTo(now) >= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【fall】 min", true);
             }
-            if (previous.compareTo(min) < 0 && now.compareTo(min) <= 0) {
-                LogUtil.notify(stockPriceLimitBean.getCode() + "【突破】地线", true);
+            if (previous.compareTo(min) < 0 && min.compareTo(now) <= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【rise】 min", true);
             }
         }
         if (null != stockPriceLimitBean.getMaxLimit()) {
             BigDecimal max = new BigDecimal(stockPriceLimitBean.getMaxLimit());
-            if (previous.compareTo(max) > 0 && now.compareTo(max) >= 0) {
-                LogUtil.notify(stockPriceLimitBean.getCode() + "【跌破】人线", true);
+            if (previous.compareTo(max) > 0 && max.compareTo(now) >= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【fall】 max", true);
             }
-            if (previous.compareTo(max) < 0 && now.compareTo(max) <= 0) {
-                LogUtil.notify(stockPriceLimitBean.getCode() + "【突破】人线", true);
+            if (previous.compareTo(max) < 0 && max.compareTo(now) <= 0) {
+                LogUtil.notify(stockPriceLimitBean.getCode() + "【rise】 max", true);
             }
         }
     }
