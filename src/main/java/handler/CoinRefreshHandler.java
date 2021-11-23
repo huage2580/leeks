@@ -136,12 +136,12 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "当前价");
+        int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "涨跌幅");
         table.getColumn(getColumnName(columnIndex)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(CoinBean bean) {
-        if (bean.getCode() == null) {
+        if (bean.getSymbol() == null) {
             return;
         }
         Vector<Object> convertData = convertData(bean);
@@ -149,7 +149,7 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
             return;
         }
         // 获取行
-        int index = findRowIndex(codeColumnIndex, bean.getCode());
+        int index = findRowIndex(codeColumnIndex, bean.getSymbol());
         if (index >= 0) {
             updateRow(index, convertData);
         } else {

@@ -1,58 +1,78 @@
 package bean;
 
-import utils.PinYinUtils;
+import java.text.DecimalFormat;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class CoinBean {
-    private String code;
-    private String name;
-    private String timeStamp;
-    private String price;
+    static DecimalFormat decimalFormat = new DecimalFormat("#.00");
+
+    private String symbol;
+    private double regularMarketPrice;
+    private double regularMarketDayHigh;
+    private double regularMarketDayLow;
+    private double regularMarketChange;
+    private double regularMarketChangePercent;
+    private long regularMarketTime;
+
 
     public CoinBean(String code) {
-        this.code = code;
-        this.name = "--";
+        this.symbol = code;
     }
 
-    public CoinBean(String code, String name, String timeStamp, String price) {
-        this.code = code;
-        this.name = name;
-        this.timeStamp = timeStamp;
-        this.price = price;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public String getCode() {
-        return code;
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public double getRegularMarketPrice() {
+        return regularMarketPrice;
     }
 
-    public String getName() {
-        return name;
+    public void setRegularMarketPrice(double regularMarketPrice) {
+        this.regularMarketPrice = regularMarketPrice;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public double getRegularMarketDayHigh() {
+        return regularMarketDayHigh;
     }
 
-    public String getTimeStamp() {
-        return timeStamp;
+    public void setRegularMarketDayHigh(double regularMarketDayHigh) {
+        this.regularMarketDayHigh = regularMarketDayHigh;
     }
 
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
+    public double getRegularMarketDayLow() {
+        return regularMarketDayLow;
     }
 
-    public String getPrice() {
-        return price;
+    public void setRegularMarketDayLow(double regularMarketDayLow) {
+        this.regularMarketDayLow = regularMarketDayLow;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public double getRegularMarketChange() {
+        return regularMarketChange;
+    }
+
+    public void setRegularMarketChange(double regularMarketChange) {
+        this.regularMarketChange = regularMarketChange;
+    }
+
+    public double getRegularMarketChangePercent() {
+        return regularMarketChangePercent;
+    }
+
+    public void setRegularMarketChangePercent(double regularMarketChangePercent) {
+        this.regularMarketChangePercent = regularMarketChangePercent;
+    }
+
+    public long getTimeStamp() {
+        return regularMarketTime;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.regularMarketTime = timeStamp;
     }
 
     /**
@@ -64,15 +84,21 @@ public class CoinBean {
     public String getValueByColumn(String colums, boolean colorful) {
         switch (colums) {
             case "编码":
-                return this.getCode();
-            case "名称":
-                return colorful ? this.getName() : PinYinUtils.toPinYin(this.getName());
+                return this.getSymbol();
+            case "涨跌":
+                return String.valueOf(this.getRegularMarketChange());
+            case "涨跌幅":
+                return decimalFormat.format(this.getRegularMarketChangePercent())+"%";
+            case "最高价":
+                return String.valueOf(this.getRegularMarketDayHigh());
+            case "最低价":
+                return String.valueOf(this.getRegularMarketDayLow());
             case "当前价":
-                return this.getPrice();
+                return String.valueOf(this.getRegularMarketPrice());
             case "更新时间":
                 String timeStr = "--";
-                if (this.getTimeStamp()!=null){
-                    timeStr = this.getTimeStamp();
+                if (this.getTimeStamp()>0){
+                    timeStr = String.valueOf(this.getTimeStamp());
                 }
                 return timeStr;
 

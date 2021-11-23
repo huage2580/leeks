@@ -8,9 +8,6 @@
       <item class="com.intellij.uiDesigner.VSpacer" tooltip-text="Vertical Spacer" icon="/com/intellij/uiDesigner/icons/vspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="6" hsize-policy="1" anchor="0" fill="2" />
       </item>
-      <item class="javax.swing.JPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3" />
-      </item>
       <item class="javax.swing.JScrollPane" icon="/com/intellij/uiDesigner/icons/scrollPane.png" removable="false" auto-create-binding="false" can-attach-label="true">
         <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
       </item>
@@ -31,6 +28,9 @@
         <initial-values>
           <property name="text" value="Label" />
         </initial-values>
+      </item>
+      <item class="javax.swing.JPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="false" auto-create-binding="false" can-attach-label="false">
+        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3" />
       </item>
       <item class="javax.swing.JTextField" icon="/com/intellij/uiDesigner/icons/textField.png" removable="false" auto-create-binding="true" can-attach-label="true">
         <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">

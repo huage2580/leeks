@@ -6,7 +6,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import handler.CoinRefreshHandler;
-import handler.SinaCoinHandler;
+import handler.YahooCoinHandler;
 import org.jetbrains.annotations.NotNull;
 import utils.WindowUtils;
 
@@ -55,7 +55,7 @@ public class CoinWindow {
     public CoinWindow() {
 
         //切换接口
-        handler = new SinaCoinHandler(table,refreshTimeLabel);
+        handler = new YahooCoinHandler(table,refreshTimeLabel);
 
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.Pause) {
             @Override

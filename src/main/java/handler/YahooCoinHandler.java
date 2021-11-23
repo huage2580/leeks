@@ -1,7 +1,10 @@
 package handler;
 
-import com.google.common.base.Joiner;
 import bean.CoinBean;
+import bean.YahooResponse;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.gson.Gson;
 import utils.HttpClientPool;
 import utils.LogUtil;
 
@@ -13,15 +16,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-@Deprecated
-public class SinaCoinHandler extends CoinRefreshHandler {
-    private static final String URL = "http://hq.sinajs.cn/list=";
-    private static final Pattern DEFAULT_STOCK_PATTERN = Pattern.compile("var hq_str_(\\w+?)=\"(.*?)\";");
+import java.util.stream.Collectors;
+
+public class YahooCoinHandler extends CoinRefreshHandler {
+    private static final String URL = "https://query1.finance.yahoo.com/v7/finance/quote?&symbols=";
+    private static final String KEYS = "&fields=regularMarketChange,regularMarketChangePercent,regularMarketPrice,regularMarketTime,regularMarketDayHigh,regularMarketDayLow";
     private final JLabel refreshTimeLabel;
 
     private static ScheduledExecutorService mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
 
-    public SinaCoinHandler(JTable table, JLabel label) {
+    private static Gson gson = new Gson();
+
+    public YahooCoinHandler(JTable table, JLabel label) {
         super(table);
         this.refreshTimeLabel = label;
     }
@@ -49,9 +55,12 @@ public class SinaCoinHandler extends CoinRefreshHandler {
     }
 
     private void pollStock(List<String> code) {
+        if (code.isEmpty()){
+            return;
+        }
         String params = Joiner.on(",").join(code);
         try {
-            String res = HttpClientPool.getHttpClient().get(URL + params);
+            String res = HttpClientPool.getHttpClient().get(URL + params + KEYS);
 //            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));
 //            System.out.printf("%s,%s%n", time, res);
             handleResponse(res);
@@ -61,27 +70,20 @@ public class SinaCoinHandler extends CoinRefreshHandler {
     }
 
     public void handleResponse(String response) {
-//        List<String> refreshTimeList = new ArrayList<>();
-//        for (String line : response.split("\n")) {
-//            Matcher matcher = DEFAULT_STOCK_PATTERN.matcher(line);
-//            if (!matcher.matches()) {
-//                continue;
-//            }
-//            String code = matcher.group(1);
-//            String[] split = matcher.group(2).split(",");
-//            if (split.length < 2) {//空数据跳过
-//                continue;
-//            }
-//            CoinBean bean = new CoinBean(code);
-//            bean.setName(split[9]);
-//            bean.setPrice(split[8]);
-//            bean.setTimeStamp(split[0]);
-//            updateData(bean);
-//            refreshTimeList.add(split[0]);
-//        }
-//
-//        String text = refreshTimeList.stream().sorted().findFirst().orElse("");
-//        SwingUtilities.invokeLater(() -> refreshTimeLabel.setText(text));
+        System.out.println("解析虚拟币："+response);
+        List<String> refreshTimeList = new ArrayList<>();
+        try{
+            YahooResponse yahooResponse = gson.fromJson(response, YahooResponse.class);
+            for (CoinBean coinBean : yahooResponse.getQuoteResponse().getResult()) {
+                updateData(coinBean);
+                refreshTimeList.add(coinBean.getValueByColumn("更新时间",false));
+            }
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
+
+        String text = refreshTimeList.stream().sorted().findFirst().orElse("");
+        SwingUtilities.invokeLater(() -> refreshTimeLabel.setText(text));
     }
 
     @Override

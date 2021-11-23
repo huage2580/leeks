@@ -24,9 +24,9 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 每次修改，添加基金,股票，只需点击apply自动生效。    
 基金更新频率一分钟一次，股票10s一次  
 ### 加密货币的选项
-加密货币行情采用新浪的接口，编码格式如下:  
-例:`比特币`货币的编码为`btc_btcbtcusd`,【btc_btc】【加密货币代码】【usd】  
-支持的货币和代码在这里 [https://finance.sina.com.cn/blockchain/hq.shtml]
+加密货币行情采用雅虎的接口，必须使用代理才能获取数据，编码格式如下:  
+例:`比特币`货币的编码为`BTC-USD`,【加密货币代码-USD】  
+
 ### 分时图和K线图  
 基金只有估值分时图，股票提供分时图，日周月K线图，非图表，不能进行操作，不会自动刷新。  
 在表格中双击行即可打开分时图，右键弹出菜单选择K线图。  
@@ -78,7 +78,10 @@ bug fix from [DAIE](https://github.com/DA1Y1)
 - V1.9.1  
 图表界面优化 from [dengerYang](https://github.com/dengerYang)  
 - V1.9.3  
-加入代理设置
+加入代理设置  
+- V1.9.5  
+虚拟币行情接口切换为雅虎，必须使用代理才能获取数据  
+
 
 
 

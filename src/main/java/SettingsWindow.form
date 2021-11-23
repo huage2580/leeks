@@ -198,7 +198,7 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <text value="虚拟币编码，英文逗号分隔："/>
+                  <text value="虚拟币编码，英文逗号分隔：(虚拟币行情必须使用代理才能查看)"/>
                 </properties>
               </component>
               <scrollpane id="63733">
@@ -216,7 +216,7 @@
                       <minimumSize width="370" height="17"/>
                       <preferredSize width="370" height="190"/>
                       <rows value="10"/>
-                      <toolTipText value="英文逗号分隔，例如：【btc_btcbtcusd,btc_btcethusd】注意编码正确性，一般格式为[btc_btc][币编码][usd]"/>
+                      <toolTipText value="英文逗号分隔，例如：【BTC-USD,DOGE-USD】注意编码大写，一般格式为[币编码-USD]"/>
                     </properties>
                     <clientProperties>
                       <html.disable class="java.lang.Boolean" value="false"/>
