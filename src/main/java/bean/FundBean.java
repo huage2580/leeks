@@ -46,9 +46,9 @@ public class FundBean {
         this.fundName = "--";
     }
 
-    public static void loadFund(FundBean fund, Map<String, String[]> codeMap){
+    public static void loadFund(FundBean fund, Map<String, String[]> codeMap) {
         String code = fund.getFundCode();
-        if(codeMap.containsKey(code)){
+        if (codeMap.containsKey(code)) {
             String[] codeStr = codeMap.get(code);
             if (codeStr.length > 2) {
                 fund.setCostPrise(codeStr[1]);
@@ -161,7 +161,8 @@ public class FundBean {
 
     /**
      * 返回列名的VALUE 用作展示
-     * @param colums 字段名
+     *
+     * @param colums   字段名
      * @param colorful 隐蔽模式
      * @return 对应列名的VALUE值 无法匹配返回""
      */
@@ -197,7 +198,7 @@ public class FundBean {
             case "持有份额":
                 return this.getBonds();
             case "收益率":
-                return this.getIncomePercent() + "%";
+                return this.getCostPrise() != null ? this.getIncomePercent() + "%" : this.getCostPrise();
             case "收益":
                 return this.getIncome();
             default:

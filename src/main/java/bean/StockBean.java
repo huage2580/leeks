@@ -218,12 +218,10 @@ public class StockBean {
                 return this.getMin();
             case "成本价":
                 return this.getCostPrise();
-//            case "成本":
-//                return this.getCost();
             case "持仓":
                 return this.getBonds();
             case "收益率":
-                return this.getIncomePercent() + "%";
+                return this.getCostPrise() != null ? this.getIncomePercent() + "%" : this.getCostPrise();
             case "收益":
                 return this.getIncome();
             case "更新时间":
