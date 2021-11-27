@@ -169,7 +169,8 @@ public class FundWindow implements ToolWindowFactory {
     }
 
     private static List<String> loadFunds() {
-        return getConfigList("key_funds", "[;]");
+//        return getConfigList("key_funds", "[,，]");
+        return getConfigList("key_funds");
     }
 
     public static List<String> getConfigList(String key, String split) {
@@ -179,6 +180,26 @@ public class FundWindow implements ToolWindowFactory {
         }
         Set<String> set = new LinkedHashSet<>();
         String[] codes = value.split(split);
+        for (String code : codes) {
+            if (!code.isEmpty()) {
+                set.add(code.trim());
+            }
+        }
+        return new ArrayList<>(set);
+    }
+
+    public static List<String> getConfigList(String key) {
+        String value = PropertiesComponent.getInstance().getValue(key);
+        if (StringUtils.isEmpty(value)) {
+            return new ArrayList<>();
+        }
+        Set<String> set = new LinkedHashSet<>();
+        String[] codes = null;
+        if (value.contains(";")) {//包含分号
+            codes = value.split("[;]");
+        } else {
+            codes = value.split("[,，]");
+        }
         for (String code : codes) {
             if (!code.isEmpty()) {
                 set.add(code.trim());

@@ -28,18 +28,18 @@ public class TencentStockHandler extends StockRefreshHandler {
     @Override
     public void handle(List<String> code) {
 
-        if (worker!=null){
+        if (worker != null) {
             worker.interrupt();
         }
         LogUtil.info("Leeks 更新Stock编码数据.");
 //        clearRow();
-        if (code.isEmpty()){
+        if (code.isEmpty()) {
             return;
         }
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (worker!=null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()){
+                while (worker != null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()) {
                     stepAction();
                     try {
                         Thread.sleep(threadSleepTime * 1000);
@@ -56,7 +56,13 @@ public class TencentStockHandler extends StockRefreshHandler {
         List<String> codeList = new ArrayList<>();
         codeMap = new HashMap<>();
         for (String str : code) {
-            String[] strArray = str.split(",");
+            //兼容原有设置
+            String[] strArray;
+            if (str.contains(",")) {
+                strArray = str.split(",");
+            } else {
+                strArray = new String[]{str};
+            }
             codeList.add(strArray[0]);
             codeMap.put(strArray[0], strArray);
         }
@@ -84,11 +90,11 @@ public class TencentStockHandler extends StockRefreshHandler {
 //            }
 //            return;
 //        }
-        if (StringUtils.isEmpty(urlPara)){
+        if (StringUtils.isEmpty(urlPara)) {
             return;
         }
         try {
-            String result = HttpClientPool.getHttpClient().get("http://qt.gtimg.cn/q="+urlPara);
+            String result = HttpClientPool.getHttpClient().get("http://qt.gtimg.cn/q=" + urlPara);
             parse(result);
             updateUI();
         } catch (Exception e) {
@@ -99,8 +105,8 @@ public class TencentStockHandler extends StockRefreshHandler {
     private void parse(String result) {
         String[] lines = result.split("\n");
         for (String line : lines) {
-            String code = line.substring(line.indexOf("_")+1,line.indexOf("="));
-            String dataStr = line.substring(line.indexOf("=")+2,line.length()-2);
+            String code = line.substring(line.indexOf("_") + 1, line.indexOf("="));
+            String dataStr = line.substring(line.indexOf("=") + 2, line.length() - 2);
             String[] values = dataStr.split("~");
             StockBean bean = new StockBean(code, codeMap);
             bean.setName(values[1]);

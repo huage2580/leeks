@@ -171,7 +171,8 @@ public class StockWindow {
     }
 
     private static List<String> loadStocks(){
-        return FundWindow.getConfigList("key_stocks", "[;]");
+//        return FundWindow.getConfigList("key_stocks", "[,，]");
+        return FundWindow.getConfigList("key_stocks");
     }
 
 }

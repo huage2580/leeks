@@ -59,7 +59,13 @@ public class SinaStockHandler extends StockRefreshHandler {
         List<String> codeList = new ArrayList<>();
         Map<String, String[]> codeMap = new HashMap<>();
         for (String str : code) {
-            String[] strArray = str.split(",");
+            //兼容原有设置
+            String[] strArray;
+            if (str.contains(",")) {
+                strArray = str.split(",");
+            } else {
+                strArray = new String[]{str};
+            }
             codeList.add(strArray[0]);
             codeMap.put(strArray[0], strArray);
         }
