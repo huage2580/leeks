@@ -198,7 +198,7 @@ public class FundBean {
             case "持有份额":
                 return this.getBonds();
             case "收益率":
-                return this.getCostPrise() != null ? this.getIncomePercent() + "%" : this.getCostPrise();
+                return this.getCostPrise() != null ? this.getIncomePercent() + "%" : this.getIncomePercent();
             case "收益":
                 return this.getIncome();
             default:
