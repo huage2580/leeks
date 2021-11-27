@@ -1,11 +1,11 @@
 package handler;
 
+import bean.StockBean;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import bean.StockBean;
 import utils.PinYinUtils;
 import utils.WindowUtils;
 
@@ -14,8 +14,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public abstract class StockRefreshHandler extends DefaultTableModel {
     private static String[] columnNames;
@@ -146,8 +146,15 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         };
         int columnIndex1 = WindowUtils.getColumnIndexByName(columnNames, "涨跌");
         int columnIndex2 = WindowUtils.getColumnIndexByName(columnNames, "涨跌幅");
+
+        int columnIndex3 = WindowUtils.getColumnIndexByName(columnNames, "收益率");
+        int columnIndex4 = WindowUtils.getColumnIndexByName(columnNames, "收益");
+
         table.getColumn(getColumnName(columnIndex1)).setCellRenderer(cellRenderer);
         table.getColumn(getColumnName(columnIndex2)).setCellRenderer(cellRenderer);
+
+        table.getColumn(getColumnName(columnIndex3)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(columnIndex4)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(StockBean bean) {

@@ -1,11 +1,11 @@
 package handler;
 
+import bean.FundBean;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import bean.FundBean;
 import utils.PinYinUtils;
 import utils.WindowUtils;
 
@@ -14,8 +14,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public abstract class FundRefreshHandler extends DefaultTableModel {
     private static String[] columnNames;
@@ -145,7 +145,14 @@ public abstract class FundRefreshHandler extends DefaultTableModel {
         };
 //        table.getColumn(getColumnName(2)).setCellRenderer(cellRenderer);
         int columnIndex = WindowUtils.getColumnIndexByName(columnNames, "估算涨跌");
+
+        int columnIndex3 = WindowUtils.getColumnIndexByName(columnNames, "收益率");
+        int columnIndex4 = WindowUtils.getColumnIndexByName(columnNames, "收益");
+
         table.getColumn(getColumnName(columnIndex)).setCellRenderer(cellRenderer);
+
+        table.getColumn(getColumnName(columnIndex3)).setCellRenderer(cellRenderer);
+        table.getColumn(getColumnName(columnIndex4)).setCellRenderer(cellRenderer);
     }
 
     protected void updateData(FundBean bean) {

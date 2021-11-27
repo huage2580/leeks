@@ -9,10 +9,10 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.JBTable;
-import org.jetbrains.annotations.NotNull;
 import handler.SinaStockHandler;
 import handler.StockRefreshHandler;
 import handler.TencentStockHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import utils.LogUtil;
 import utils.PopupsUiUtil;
@@ -171,7 +171,7 @@ public class StockWindow {
     }
 
     private static List<String> loadStocks(){
-        return FundWindow.getConfigList("key_stocks", "[,，]");
+        return FundWindow.getConfigList("key_stocks", "[;]");
     }
 
 }
