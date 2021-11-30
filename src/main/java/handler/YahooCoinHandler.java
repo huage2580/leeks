@@ -70,7 +70,7 @@ public class YahooCoinHandler extends CoinRefreshHandler {
     }
 
     public void handleResponse(String response) {
-        System.out.println("解析虚拟币："+response);
+//        System.out.println("解析虚拟币："+response);
         List<String> refreshTimeList = new ArrayList<>();
         try{
             YahooResponse yahooResponse = gson.fromJson(response, YahooResponse.class);
