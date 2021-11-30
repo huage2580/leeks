@@ -66,7 +66,7 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <text value="基金编码，英文逗号分隔："/>
+                  <text value="基金编码，英文分号分隔（持仓成本价和持仓份额跟在基金编码后，用英文逗号分隔）："/>
                 </properties>
               </component>
               <scrollpane id="f10a8">
@@ -85,7 +85,7 @@
                       <preferredSize width="370" height="190"/>
                       <rows value="10"/>
                       <text value=""/>
-                      <toolTipText value="基金编码，英文逗号分隔"/>
+                      <toolTipText value="基金编码，英文分号分隔（持仓成本价和持仓份额跟在基金编码后，用英文逗号分隔），例如:{001632,3.2050,951.64;002340,4.2820,467.07}"/>
                     </properties>
                   </component>
                 </children>
@@ -133,7 +133,7 @@
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <text value="股票编码，英文逗号分隔："/>
+                  <text value="股票编码，英文分号分隔（成本价和持仓接在编码后用逗号分隔）："/>
                 </properties>
               </component>
               <scrollpane id="e0430">
@@ -151,7 +151,7 @@
                       <minimumSize width="370" height="17"/>
                       <preferredSize width="370" height="190"/>
                       <rows value="10"/>
-                      <toolTipText value="股票编码，英文逗号分隔，例如：【sh000001,sh600519,sz000001,hk00700,usAAPL】"/>
+                      <toolTipText value="股票编码，英文逗号分隔，例如：【sh000001,12.451,1200;hk00700,13.412,2000】"/>
                     </properties>
                     <clientProperties>
                       <html.disable class="java.lang.Boolean" value="false"/>
