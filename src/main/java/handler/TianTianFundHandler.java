@@ -115,9 +115,7 @@ public class TianTianFundHandler extends FundRefreshHandler {
                             String bondStr = bean.getBonds();
                             if (StringUtils.isNotEmpty(bondStr)) {
                                 BigDecimal bondDec = new BigDecimal(bondStr);
-                                BigDecimal incomeDec = incomeDiff.divide(costPriceDec, 8, RoundingMode.HALF_UP)
-                                        .multiply(bondDec)
-                                        .multiply(now)
+                                BigDecimal incomeDec = incomeDiff.multiply(bondDec)
                                         .setScale(2, RoundingMode.HALF_UP);
                                 bean.setIncome(incomeDec.toString());
                             }
