@@ -88,7 +88,10 @@ bug fix from [DAIE](https://github.com/DA1Y1)
 - V1.9.5  
 虚拟币行情接口切换为雅虎，必须使用代理才能获取数据  
 - V1.9.8  
-支持基金和股票成本价，持仓，收益率，收益显示 from [chenheng](https://gitee.com/RoaringFlame)  
+支持基金和股票成本价，持仓，收益率，收益显示 from [chenheng](https://github.com/RoaringFlame)  
+- V1.9.9  
+修复成本价过低时收益金额不正确的问题；from [神驱一梦](https://github.com/BorrisWQBi)    
+
 
 
 
