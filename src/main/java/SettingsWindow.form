@@ -52,6 +52,8 @@
             <colspec value="left:0px:grow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
             <constraints>
               <tabbedpane title="Fund">
                 <tooltip value="基金"/>
@@ -62,7 +64,7 @@
             <children>
               <component id="bf47d" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
@@ -71,7 +73,7 @@
               </component>
               <scrollpane id="f10a8">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties/>
@@ -97,16 +99,20 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <text value="持续刷新间隔时间（秒）："/>
-                  <toolTipText value="最小值=1"/>
+                  <text value="持续刷新Cron表达式（支持多个，用英文分号分隔;）："/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
-              <component id="f0ef0" class="javax.swing.JSpinner" binding="spinnerFund">
+              <component id="f0ef0" class="javax.swing.JTextField" binding="cronExpressionFund">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                  <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="支持多个，使用分号分割，注意：多个表达式不要有交集，因为会运行多次；表达式：0 * * * * ?"/>
+                </properties>
               </component>
             </children>
           </grid>
@@ -119,6 +125,8 @@
             <colspec value="left:0px:grow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
             <constraints>
               <tabbedpane title="Stock">
                 <tooltip value="股票"/>
@@ -129,7 +137,7 @@
             <children>
               <component id="f57a1" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
@@ -138,7 +146,7 @@
               </component>
               <scrollpane id="e0430">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties/>
@@ -165,15 +173,20 @@
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
-                  <text value="持续刷新间隔时间（秒）："/>
+                  <text value="持续刷新Cron表达式（支持多个，用英文分号分隔;）："/>
                 </properties>
               </component>
-              <component id="44786" class="javax.swing.JSpinner" binding="spinnerStock">
+              <component id="44786" class="javax.swing.JTextField" binding="cronExpressionStock">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                  <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <text value=""/>
+                  <toolTipText value="支持多个，使用分号分割，注意：多个表达式不要有交集，因为会运行多次；表达式：0 * * * * ?"/>
+                </properties>
               </component>
             </children>
           </grid>
@@ -186,6 +199,8 @@
             <colspec value="left:0px:grow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
             <constraints>
               <tabbedpane title="Coin"/>
             </constraints>
@@ -194,7 +209,7 @@
             <children>
               <component id="9bf70" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
@@ -203,7 +218,7 @@
               </component>
               <scrollpane id="63733">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties/>
@@ -230,15 +245,19 @@
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
-                  <text value="持续刷新间隔时间（秒）："/>
+                  <text value="持续刷新Cron表达式（支持多个，用英文分号分隔;）："/>
                 </properties>
               </component>
-              <component id="b5c4c" class="javax.swing.JSpinner" binding="spinnerCoin">
+              <component id="b5c4c" class="javax.swing.JTextField" binding="cronExpressionCoin">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                  <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="支持多个，使用分号分割，注意：多个表达式不要有交集，因为会运行多次；表达式：0 * * * * ?"/>
+                </properties>
               </component>
             </children>
           </grid>

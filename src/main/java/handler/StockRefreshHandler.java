@@ -50,11 +50,6 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
         }
     }
 
-    /**
-     * 更新数据的间隔时间（秒）
-     */
-    protected volatile int threadSleepTime = 10;
-
     public StockRefreshHandler(JTable table) {
         this.table = table;
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -137,7 +132,7 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
                     } else {
                         setForeground(JBColor.GRAY);
                     }
-                } else if (temp == 0) {
+                } else {
                     Color orgin = getForeground();
                     setForeground(orgin);
                 }
@@ -231,13 +226,5 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int column) {
         return false;
-    }
-
-    public int getThreadSleepTime() {
-        return threadSleepTime;
-    }
-
-    public void setThreadSleepTime(int threadSleepTime) {
-        this.threadSleepTime = threadSleepTime;
     }
 }

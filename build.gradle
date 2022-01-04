@@ -16,6 +16,11 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'com.github.promeg:tinypinyin:2.0.3' // TinyPinyin核心包，约80KB
+    compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.2', {
+     exclude group:'com.zaxxer'
+     exclude group:'org.slf4j' // 与idea自带的冲突
+     exclude group:'com.mchange'
+    }
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/

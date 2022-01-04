@@ -19,14 +19,8 @@ import java.util.Map;
 public class TianTianFundHandler extends FundRefreshHandler {
     public final static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static Gson gson = new Gson();
-    private final List<String> codes = new ArrayList<>();
 
-    private Thread worker;
     private JLabel refreshTimeLabel;
-    /**
-     * 更新数据的间隔时间（秒）
-     */
-    private volatile int threadSleepTime = 60;
 
     public TianTianFundHandler(JTable table, JLabel refreshTimeLabel) {
         super(table);
@@ -35,48 +29,21 @@ public class TianTianFundHandler extends FundRefreshHandler {
 
     @Override
     public void handle(List<String> code) {
-        if (worker != null) {
-            worker.interrupt();
-        }
-        LogUtil.info("Leeks 更新Fund编码数据.");
+        //LogUtil.info("Leeks 更新Fund编码数据.");
 
         if (code.isEmpty()) {
             return;
         }
 
-        worker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (worker != null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()) {
-                    synchronized (codes) {
-                        stepAction();
-                    }
-                    try {
-                        Thread.sleep(threadSleepTime * 1000);
-                    } catch (InterruptedException e) {
-                        LogUtil.info("Leeks 已停止更新Fund编码数据.");
-                        refreshTimeLabel.setText("stop");
-                        return;
-                    }
-                }
-            }
-        });
-        synchronized (codes) {
-            codes.clear();
-            codes.addAll(code);
-        }
-        worker.start();
+        stepAction(code);
     }
 
     @Override
     public void stopHandle() {
-        if (worker != null) {
-            worker.interrupt();
-            LogUtil.info("Leeks 准备停止更新Fund编码数据.");
-        }
+        LogUtil.info("Leeks 准备停止更新Fund编码数据.");
     }
 
-    private void stepAction() {
+    private void stepAction(List<String> codes) {
 //        LogUtil.info("Leeks 刷新基金数据.");
         List<String> codeList = new ArrayList<>();
         Map<String, String[]> codeMap = new HashMap<>();
@@ -138,16 +105,9 @@ public class TianTianFundHandler extends FundRefreshHandler {
             @Override
             public void run() {
                 refreshTimeLabel.setText(LocalDateTime.now().format(timeFormatter));
-                refreshTimeLabel.setToolTipText("最后刷新时间，刷新间隔" + threadSleepTime + "秒");
+                refreshTimeLabel.setToolTipText("最后刷新时间");
             }
         });
     }
 
-    public int getThreadSleepTime() {
-        return threadSleepTime;
-    }
-
-    public void setThreadSleepTime(int threadSleepTime) {
-        this.threadSleepTime = threadSleepTime;
-    }
 }

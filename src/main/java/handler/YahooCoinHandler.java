@@ -2,7 +2,6 @@ package handler;
 
 import bean.CoinBean;
 import bean.YahooResponse;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import utils.HttpClientPool;
@@ -11,21 +10,13 @@ import utils.LogUtil;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class YahooCoinHandler extends CoinRefreshHandler {
-    private static final String URL = "https://query1.finance.yahoo.com/v7/finance/quote?&symbols=";
-    private static final String KEYS = "&fields=regularMarketChange,regularMarketChangePercent,regularMarketPrice,regularMarketTime,regularMarketDayHigh,regularMarketDayLow";
+    private final String URL = "https://query1.finance.yahoo.com/v7/finance/quote?&symbols=";
+    private final String KEYS = "&fields=regularMarketChange,regularMarketChangePercent,regularMarketPrice,regularMarketTime,regularMarketDayHigh,regularMarketDayLow";
     private final JLabel refreshTimeLabel;
 
-    private static ScheduledExecutorService mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
-
-    private static Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public YahooCoinHandler(JTable table, JLabel label) {
         super(table);
@@ -38,20 +29,7 @@ public class YahooCoinHandler extends CoinRefreshHandler {
             return;
         }
 
-        useScheduleThreadExecutor(code);
-    }
-
-    public void useScheduleThreadExecutor(List<String> code) {
-        if (mSchedulerExecutor.isShutdown()){
-            mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
-        }
-        mSchedulerExecutor.scheduleAtFixedRate(getWork(code), 0, threadSleepTime, TimeUnit.SECONDS);
-    }
-
-    private Runnable getWork(List<String> code) {
-        return () -> {
-            pollStock(code);
-        };
+        pollStock(code);
     }
 
     private void pollStock(List<String> code) {
@@ -88,7 +66,6 @@ public class YahooCoinHandler extends CoinRefreshHandler {
 
     @Override
     public void stopHandle() {
-        mSchedulerExecutor.shutdown();
         LogUtil.info("leeks stock 自动刷新关闭!");
     }
 }

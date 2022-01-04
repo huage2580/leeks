@@ -50,11 +50,6 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
         }
     }
 
-    /**
-     * 更新数据的间隔时间（秒）
-     */
-    protected volatile int threadSleepTime = 10;
-
     public CoinRefreshHandler(JTable table) {
         this.table = table;
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -216,11 +211,4 @@ public abstract class CoinRefreshHandler extends DefaultTableModel {
         return false;
     }
 
-    public int getThreadSleepTime() {
-        return threadSleepTime;
-    }
-
-    public void setThreadSleepTime(int threadSleepTime) {
-        this.threadSleepTime = threadSleepTime;
-    }
 }

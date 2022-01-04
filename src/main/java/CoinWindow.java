@@ -7,7 +7,11 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import handler.CoinRefreshHandler;
 import handler.YahooCoinHandler;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import quartz.HandlerJob;
+import quartz.QuartzManager;
 import utils.WindowUtils;
 
 import javax.swing.*;
@@ -15,9 +19,11 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.*;
 import java.util.List;
 
 public class CoinWindow {
+    public static final String NAME = "Coin";
     private JPanel mPanel;
 
     static CoinRefreshHandler handler;
@@ -60,7 +66,7 @@ public class CoinWindow {
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.Pause) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
-                handler.stopHandle();
+                stop();
                 this.setEnabled(false);
             }
         };
@@ -88,23 +94,42 @@ public class CoinWindow {
         if (handler != null) {
             PropertiesComponent instance = PropertiesComponent.getInstance();
             handler.setStriped(instance.getBoolean("key_table_striped"));
-            handler.setThreadSleepTime(instance.getInt("key_coin_thread_time", handler.getThreadSleepTime()));
-            handler.refreshColorful(instance.getBoolean("key_colorful"));
             handler.clearRow();
             handler.setupTable(loadCoins());
-            handler.handle(loadCoins());
+            refresh();
         }
     }
     public static void refresh() {
         if (handler != null) {
-            boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-            handler.refreshColorful(colorful);
-            handler.handle(loadCoins());
+            PropertiesComponent instance = PropertiesComponent.getInstance();
+            handler.refreshColorful(instance.getBoolean("key_colorful"));
+            List<String> codes = loadCoins();
+            if (CollectionUtils.isEmpty(codes)) {
+                stop(); //如果没有数据则不需要启动时钟任务浪费资源
+            } else {
+                handler.handle(codes);
+                QuartzManager quartzManager = QuartzManager.getInstance(NAME);
+                HashMap<String, Object> dataMap = new HashMap<>();
+                dataMap.put(HandlerJob.KEY_HANDLER, handler);
+                dataMap.put(HandlerJob.KEY_CODES, codes);
+                String cronExpression = instance.getValue("key_cron_expression_coin");
+                if (StringUtils.isEmpty(cronExpression)) {
+                    cronExpression = "*/10 * * * * ?";
+                }
+                quartzManager.runJob(HandlerJob.class, cronExpression, dataMap);
+            }
+        }
+    }
+
+    public static void stop() {
+        QuartzManager.getInstance(NAME).stopJob();
+        if (handler != null) {
+            handler.stopHandle();
         }
     }
 
     private static List<String> loadCoins(){
-        return FundWindow.getConfigList("key_coins", "[,，]");
+        return SettingsWindow.getConfigList("key_coins", "[,，]");
     }
 
 }

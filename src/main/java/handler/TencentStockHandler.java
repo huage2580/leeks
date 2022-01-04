@@ -15,8 +15,7 @@ import java.util.List;
 
 public class TencentStockHandler extends StockRefreshHandler {
     private String urlPara;
-    private HashMap codeMap;
-    private Thread worker;
+    private HashMap<String, String[]> codeMap;
     private JLabel refreshTimeLabel;
 
 
@@ -28,29 +27,11 @@ public class TencentStockHandler extends StockRefreshHandler {
     @Override
     public void handle(List<String> code) {
 
-        if (worker != null) {
-            worker.interrupt();
-        }
-        LogUtil.info("Leeks 更新Stock编码数据.");
+        //LogUtil.info("Leeks 更新Stock编码数据.");
 //        clearRow();
         if (code.isEmpty()) {
             return;
         }
-        worker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (worker != null && worker.hashCode() == Thread.currentThread().hashCode() && !worker.isInterrupted()) {
-                    stepAction();
-                    try {
-                        Thread.sleep(threadSleepTime * 1000);
-                    } catch (InterruptedException e) {
-                        LogUtil.info("Leeks 已停止更新Stock编码数据.");
-                        refreshTimeLabel.setText("stop");
-                        return;
-                    }
-                }
-            }
-        });
 
         //股票编码，英文分号分隔（成本价和成本接在编码后用逗号分隔）
         List<String> codeList = new ArrayList<>();
@@ -68,28 +49,16 @@ public class TencentStockHandler extends StockRefreshHandler {
         }
 
         urlPara = String.join(",", codeList);
-        worker.start();
+        stepAction();
 
     }
 
     @Override
     public void stopHandle() {
-        if (worker != null) {
-            worker.interrupt();
-            LogUtil.info("Leeks 准备停止更新Stock编码数据.");
-        }
+        LogUtil.info("Leeks 准备停止更新Stock编码数据.");
     }
 
     private void stepAction() {
-//        Date now = new Date();
-//        if ( now.getHours() < 9 || now.getHours() > 16){//九点到下午4点才更新数据
-//            try {
-//                Thread.sleep(60 * 1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            return;
-//        }
         if (StringUtils.isEmpty(urlPara)) {
             return;
         }
@@ -146,7 +115,7 @@ public class TencentStockHandler extends StockRefreshHandler {
             @Override
             public void run() {
                 refreshTimeLabel.setText(LocalDateTime.now().format(TianTianFundHandler.timeFormatter));
-                refreshTimeLabel.setToolTipText("最后刷新时间，刷新间隔" + threadSleepTime + "秒");
+                refreshTimeLabel.setToolTipText("最后刷新时间");
             }
         });
     }

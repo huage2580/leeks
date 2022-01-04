@@ -15,11 +15,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @Deprecated
 public class SinaCoinHandler extends CoinRefreshHandler {
-    private static final String URL = "http://hq.sinajs.cn/list=";
-    private static final Pattern DEFAULT_STOCK_PATTERN = Pattern.compile("var hq_str_(\\w+?)=\"(.*?)\";");
+    private final String URL = "http://hq.sinajs.cn/list=";
+    //private static final Pattern DEFAULT_STOCK_PATTERN = Pattern.compile("var hq_str_(\\w+?)=\"(.*?)\";");
     private final JLabel refreshTimeLabel;
-
-    private static ScheduledExecutorService mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
 
     public SinaCoinHandler(JTable table, JLabel label) {
         super(table);
@@ -32,20 +30,7 @@ public class SinaCoinHandler extends CoinRefreshHandler {
             return;
         }
 
-        useScheduleThreadExecutor(code);
-    }
-
-    public void useScheduleThreadExecutor(List<String> code) {
-        if (mSchedulerExecutor.isShutdown()){
-            mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
-        }
-        mSchedulerExecutor.scheduleAtFixedRate(getWork(code), 0, threadSleepTime, TimeUnit.SECONDS);
-    }
-
-    private Runnable getWork(List<String> code) {
-        return () -> {
-            pollStock(code);
-        };
+        pollStock(code);
     }
 
     private void pollStock(List<String> code) {
@@ -86,7 +71,6 @@ public class SinaCoinHandler extends CoinRefreshHandler {
 
     @Override
     public void stopHandle() {
-        mSchedulerExecutor.shutdown();
         LogUtil.info("leeks stock 自动刷新关闭!");
     }
 }
