@@ -22,7 +22,7 @@ idea插件，查看基金，股票：支持A股，港股，美股
 股票示例：`sh000001;sh000300;sh600111,55.7,500;hk00700;usAAPL;usBILI`  
 加密货币示例：`BTC-USD,DOGE-USD`  
   
-**股票编码有前缀**，示例代码：（sh000001,sh600519,sz000001,hk00700,usAAPL）`股票编码前缀小写`，建议用雪球看网页找    
+**股票编码有前缀**，示例代码：（sh000001;sh600519;sz000001;hk00700;usAAPL）`股票编码前缀小写`，建议用雪球看网页找    
   
 基金编码zfb上面有，或者天天基金看  
   
@@ -48,6 +48,8 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 ## 常见问题
 * 异常日志中出现【java.lang.NoClassDefFoundError: com/github/promeg/pinyinhelper/Pinyin】  
   解决：请直接选择【编译后的zip文件】进行安装，不要解压zip文件。
+* 股票数据内容显示都是符号【-】  
+  解决：确保填写的股票数据格式不正确，有小写前缀。示例（sh000001;sh600519;sz000001;hk00700;usAAPL）
 
 ## change  
 - v1.1   
