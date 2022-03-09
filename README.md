@@ -40,6 +40,12 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
 ### 代理  
 插件不会使用系统或者IDEA的代理，请前往插件设置页设置代理。格式为`127.0.0.1:1080` 这样子。K线图那些不会走代理  
 
+### 设置更新的时间区间  
+使用Cron表达式设置更新区间，在线cron工具 https://www.bejson.com/othertools/cron/  
+关于设置Cron表达式组合示例：
+【*/10 30-59 9,11 ? * 2-6;*/10 * 10,13,14 ? * 2-6】表示周一至周五，9:30-11:30 ，13:00-15:00，每隔10秒刷新一次；
+多个表达式不要出现时间交集，因为交集内会增加运行次数。
+
 
 ## 预览
 ![da](./img1.png)
@@ -92,7 +98,9 @@ bug fix from [DAIE](https://github.com/DA1Y1)
 - V1.9.8  
 支持基金和股票成本价，持仓，收益率，收益显示 from [chenheng](https://github.com/RoaringFlame)  
 - V1.9.9  
-修复成本价过低时收益金额不正确的问题；from [神驱一梦](https://github.com/BorrisWQBi)    
+修复成本价过低时收益金额不正确的问题；from [神驱一梦](https://github.com/BorrisWQBi)  
+- v2.0.1  
+支持自定义更新的时间段 from [dengerYang](https://github.com/dengerYang)  
 
 
 
