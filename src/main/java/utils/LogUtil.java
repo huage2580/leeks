@@ -5,8 +5,11 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+
+import javax.swing.*;
 
 public class LogUtil {
     // 解决github中的bug #122，暂时没有其它方案监听到project的变化，先预存进行逻辑校验
@@ -25,7 +28,14 @@ public class LogUtil {
     }
 
     public static void setProject(Project project) {
-        PROJECT_LIST.add(project);
+        SwingUtilities.invokeLater(() -> {
+            for (Project project1 : PROJECT_LIST) {
+                if (StringUtils.equals(project1.getProjectFilePath(), project.getProjectFilePath())) {
+                    return; //项目路径一致说明已经添加过不用保存
+                }
+            }
+            PROJECT_LIST.add(project);
+        });
     }
 
     public static void info(String text){

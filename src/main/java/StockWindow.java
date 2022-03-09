@@ -12,8 +12,12 @@ import com.intellij.ui.table.JBTable;
 import handler.SinaStockHandler;
 import handler.StockRefreshHandler;
 import handler.TencentStockHandler;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import quartz.HandlerJob;
+import quartz.QuartzManager;
 import utils.LogUtil;
 import utils.PopupsUiUtil;
 import utils.WindowUtils;
@@ -25,9 +29,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.net.MalformedURLException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class StockWindow {
+    public static final String NAME = "Stock";
     private JPanel mPanel;
 
     static StockRefreshHandler handler;
@@ -108,7 +115,7 @@ public class StockWindow {
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.Pause) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
-                handler.stopHandle();
+                stop();
                 this.setEnabled(false);
             }
         };
@@ -136,16 +143,10 @@ public class StockWindow {
             if (handler instanceof SinaStockHandler){
                 return handler;
             }
-            if (handler!=null){
-                handler.stopHandle();
-            }
             return new SinaStockHandler(table, refreshTimeLabel);
         }
         if (handler instanceof TencentStockHandler){
             return handler;
-        }
-        if (handler!=null){
-            handler.stopHandle();
         }
         return  new TencentStockHandler(table, refreshTimeLabel);
     }
@@ -155,24 +156,43 @@ public class StockWindow {
             handler = factoryHandler();
             PropertiesComponent instance = PropertiesComponent.getInstance();
             handler.setStriped(instance.getBoolean("key_table_striped"));
-            handler.setThreadSleepTime(instance.getInt("key_stocks_thread_time", handler.getThreadSleepTime()));
-            handler.refreshColorful(instance.getBoolean("key_colorful"));
             handler.clearRow();
             handler.setupTable(loadStocks());
-            handler.handle(loadStocks());
+            refresh();
         }
     }
     public static void refresh() {
         if (handler != null) {
-            boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
-            handler.refreshColorful(colorful);
-            handler.handle(loadStocks());
+            PropertiesComponent instance = PropertiesComponent.getInstance();
+            handler.refreshColorful(instance.getBoolean("key_colorful"));
+            List<String> codes = loadStocks();
+            if (CollectionUtils.isEmpty(codes)) {
+                stop(); //如果没有数据则不需要启动时钟任务浪费资源
+            } else {
+                handler.handle(codes);
+                QuartzManager quartzManager = QuartzManager.getInstance(NAME);
+                HashMap<String, Object> dataMap = new HashMap<>();
+                dataMap.put(HandlerJob.KEY_HANDLER, handler);
+                dataMap.put(HandlerJob.KEY_CODES, codes);
+                String cronExpression = instance.getValue("key_cron_expression_stock");
+                if (StringUtils.isEmpty(cronExpression)) {
+                    cronExpression = "*/10 * * * * ?";
+                }
+                quartzManager.runJob(HandlerJob.class, cronExpression, dataMap);
+            }
+        }
+    }
+
+    public static void stop() {
+        QuartzManager.getInstance(NAME).stopJob();
+        if (handler != null) {
+            handler.stopHandle();
         }
     }
 
     private static List<String> loadStocks(){
 //        return FundWindow.getConfigList("key_stocks", "[,，]");
-        return FundWindow.getConfigList("key_stocks");
+        return SettingsWindow.getConfigList("key_stocks");
     }
 
 }

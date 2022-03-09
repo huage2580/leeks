@@ -16,13 +16,13 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
 import handler.TianTianFundHandler;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import utils.HttpClientPool;
-import utils.LogUtil;
-import utils.PopupsUiUtil;
-import utils.WindowUtils;
+import quartz.HandlerJob;
+import quartz.QuartzManager;
+import utils.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.*;
 
 public class FundWindow implements ToolWindowFactory {
+    public static final String NAME = "Fund";
     private JPanel mPanel;
 
     static TianTianFundHandler fundRefreshHandler;
@@ -48,11 +49,11 @@ public class FundWindow implements ToolWindowFactory {
         loadProxySetting();
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        Content content = contentFactory.createContent(mPanel, "Fund", false);
+        Content content = contentFactory.createContent(mPanel, NAME, false);
         //股票
-        Content content_stock = contentFactory.createContent(stockWindow.getmPanel(), "Stock", false);
+        Content content_stock = contentFactory.createContent(stockWindow.getmPanel(), StockWindow.NAME, false);
         //虚拟货币
-        Content content_coin = contentFactory.createContent(coinWindow.getmPanel(), "Coin", false);
+        Content content_coin = contentFactory.createContent(coinWindow.getmPanel(), CoinWindow.NAME, false);
         ContentManager contentManager = toolWindow.getContentManager();
         contentManager.addContent(content);
         contentManager.addContent(content_stock);
@@ -147,7 +148,7 @@ public class FundWindow implements ToolWindowFactory {
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.Pause) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
-                fundRefreshHandler.stopHandle();
+                stop();
                 this.setEnabled(false);
             }
         };
@@ -170,44 +171,8 @@ public class FundWindow implements ToolWindowFactory {
 
     private static List<String> loadFunds() {
 //        return getConfigList("key_funds", "[,，]");
-        return getConfigList("key_funds");
+        return SettingsWindow.getConfigList("key_funds");
     }
-
-    public static List<String> getConfigList(String key, String split) {
-        String value = PropertiesComponent.getInstance().getValue(key);
-        if (StringUtils.isEmpty(value)) {
-            return new ArrayList<>();
-        }
-        Set<String> set = new LinkedHashSet<>();
-        String[] codes = value.split(split);
-        for (String code : codes) {
-            if (!code.isEmpty()) {
-                set.add(code.trim());
-            }
-        }
-        return new ArrayList<>(set);
-    }
-
-    public static List<String> getConfigList(String key) {
-        String value = PropertiesComponent.getInstance().getValue(key);
-        if (StringUtils.isEmpty(value)) {
-            return new ArrayList<>();
-        }
-        Set<String> set = new LinkedHashSet<>();
-        String[] codes = null;
-        if (value.contains(";")) {//包含分号
-            codes = value.split("[;]");
-        } else {
-            codes = value.split("[,，]");
-        }
-        for (String code : codes) {
-            if (!code.isEmpty()) {
-                set.add(code.trim());
-            }
-        }
-        return new ArrayList<>(set);
-    }
-
 
     @Override
     public boolean shouldBeAvailable(@NotNull Project project) {
@@ -223,19 +188,39 @@ public class FundWindow implements ToolWindowFactory {
         if (fundRefreshHandler != null) {
             PropertiesComponent instance = PropertiesComponent.getInstance();
             fundRefreshHandler.setStriped(instance.getBoolean("key_table_striped"));
-            fundRefreshHandler.setThreadSleepTime(instance.getInt("key_funds_thread_time", fundRefreshHandler.getThreadSleepTime()));
-            fundRefreshHandler.refreshColorful(instance.getBoolean("key_colorful"));
             fundRefreshHandler.clearRow();
             fundRefreshHandler.setupTable(loadFunds());
-            fundRefreshHandler.handle(loadFunds());
+            refresh();
         }
     }
 
     public static void refresh() {
         if (fundRefreshHandler != null) {
-            boolean colorful = PropertiesComponent.getInstance().getBoolean("key_colorful");
+            PropertiesComponent instance = PropertiesComponent.getInstance();
+            boolean colorful = instance.getBoolean("key_colorful");
             fundRefreshHandler.refreshColorful(colorful);
-            fundRefreshHandler.handle(loadFunds());
+            List<String> codes = loadFunds();
+            if (CollectionUtils.isEmpty(codes)) {
+                stop(); //如果没有数据则不需要启动时钟任务浪费资源
+            } else {
+                fundRefreshHandler.handle(codes);
+                QuartzManager quartzManager = QuartzManager.getInstance(NAME); // 时钟任务
+                HashMap<String, Object> dataMap = new HashMap<>();
+                dataMap.put(HandlerJob.KEY_HANDLER, fundRefreshHandler);
+                dataMap.put(HandlerJob.KEY_CODES, codes);
+                String cronExpression = instance.getValue("key_cron_expression_fund");
+                if (StringUtils.isEmpty(cronExpression)) {
+                    cronExpression = "0 * * * * ?";
+                }
+                quartzManager.runJob(HandlerJob.class, cronExpression, dataMap);
+            }
+        }
+    }
+
+    public static void stop() {
+        QuartzManager.getInstance(NAME).stopJob();
+        if (fundRefreshHandler != null) {
+            fundRefreshHandler.stopHandle();
         }
     }
 }

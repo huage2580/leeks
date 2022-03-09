@@ -14,18 +14,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SinaStockHandler extends StockRefreshHandler {
-    private static final String URL = "http://hq.sinajs.cn/list=";
-    private static final Pattern DEFAULT_STOCK_PATTERN = Pattern.compile("var hq_str_(\\w+?)=\"(.*?)\";");
+    private final String URL = "http://hq.sinajs.cn/list=";
+    private final Pattern DEFAULT_STOCK_PATTERN = Pattern.compile("var hq_str_(\\w+?)=\"(.*?)\";");
     private final JLabel refreshTimeLabel;
-
-    private static ScheduledExecutorService mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
 
     public SinaStockHandler(JTable table, JLabel label) {
         super(table);
@@ -38,20 +33,7 @@ public class SinaStockHandler extends StockRefreshHandler {
             return;
         }
 
-        useScheduleThreadExecutor(code);
-    }
-
-    public void useScheduleThreadExecutor(List<String> code) {
-        if (mSchedulerExecutor.isShutdown()) {
-            mSchedulerExecutor = Executors.newSingleThreadScheduledExecutor();
-        }
-        mSchedulerExecutor.scheduleAtFixedRate(getWork(code), 0, threadSleepTime, TimeUnit.SECONDS);
-    }
-
-    private Runnable getWork(List<String> code) {
-        return () -> {
-            pollStock(code);
-        };
+        pollStock(code);
     }
 
     private void pollStock(List<String> code) {
@@ -139,7 +121,6 @@ public class SinaStockHandler extends StockRefreshHandler {
 
     @Override
     public void stopHandle() {
-        mSchedulerExecutor.shutdown();
         LogUtil.info("leeks stock 自动刷新关闭!");
     }
 }

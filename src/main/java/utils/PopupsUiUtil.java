@@ -1,7 +1,7 @@
 package utils;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.TabInfo;
@@ -40,10 +40,9 @@ public class PopupsUiUtil {
         tabInfo.setText(type.getDesc());
         JBTabsImpl tabs = new JBTabsImpl(LogUtil.getProject());
         tabs.addTab(tabInfo);
-        JBPopupFactory.getInstance().createComponentPopupBuilder(tabs, null)
-                .setMovable(true)
-                .setRequestFocus(true)
-                .createPopup().show(RelativePoint.fromScreen(showByPoint));
+        JBPopupFactory.getInstance().createBalloonBuilder(tabs)
+                .setBorderInsets(new Insets(0, 0, 0, 0))
+                .createBalloon().show(RelativePoint.fromScreen(showByPoint), Balloon.Position.atRight);
     }
 
     /**
@@ -108,11 +107,6 @@ public class PopupsUiUtil {
      * @param showByPoint 窗口显示位置
      */
     public static void showImageByStockCode(String stockCode, StockShowType selectType, Point showByPoint) throws MalformedURLException {
-        //------试图解决个BUG，项目销毁的问题-------
-        Project project = LogUtil.getProject();
-        if (project.isDisposed()){
-            return;
-        }
         JBTabsImpl tabs = new JBTabsImpl(LogUtil.getProject());
         for (StockShowType type : StockShowType.values()) {
             String imageUrlByStock = getImageUrlByStock(stockCode, type);
@@ -145,10 +139,9 @@ public class PopupsUiUtil {
                 }
             }
         });
-        JBPopupFactory.getInstance().createComponentPopupBuilder(tabs, null)
-                .setMovable(true)
-                .setRequestFocus(true)
-                .createPopup().show(RelativePoint.fromScreen(showByPoint));
+        JBPopupFactory.getInstance().createBalloonBuilder(tabs)
+                .setBorderInsets(new Insets(0, 0, 0, 0))
+                .createBalloon().show(RelativePoint.fromScreen(showByPoint), Balloon.Position.atRight);
     }
 
     public enum FundShowType {
