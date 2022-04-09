@@ -12,8 +12,8 @@ public class WindowUtils {
     public static final String FUND_TABLE_HEADER_KEY = "fund_table_header_key2"; //移动表头时存储的key
     public static final String FUND_TABLE_HEADER_VALUE = "编码,基金名称,估算涨跌,当日净值,估算净值,持仓成本价,持有份额,收益率,收益,更新时间";
     //股票表头
-    public static final String STOCK_TABLE_HEADER_KEY = "stock_table_header_key2"; //移动表头时存储的key
-    public static final String STOCK_TABLE_HEADER_VALUE = "编码,股票名称,涨跌,涨跌幅,最高价,最低价,当前价,成本价,持仓,收益率,收益,更新时间";
+    public static final String STOCK_TABLE_HEADER_KEY = "stock_table_header_key3"; //移动表头时存储的key
+    public static final String STOCK_TABLE_HEADER_VALUE = "编码,股票名称,涨跌,涨跌幅,最高价,最低价,当前价,盯盘低价,盯盘高价,成本价,持仓,收益率,收益,更新时间";
     //货币表头
     public static final String COIN_TABLE_HEADER_KEY = "coin_table_header_key2"; //移动表头时存储的key
     public static final String COIN_TABLE_HEADER_VALUE = "编码,当前价,涨跌,涨跌幅,最高价,最低价,更新时间";
@@ -42,6 +42,9 @@ public class WindowUtils {
 
         remapPinYinMap.put(PinYinUtils.toPinYin("持仓成本价"), "持仓成本价");
         remapPinYinMap.put(PinYinUtils.toPinYin("持有份额"), "持有份额");
+
+        remapPinYinMap.put(PinYinUtils.toPinYin("盯盘低价"), "盯盘低价");
+        remapPinYinMap.put(PinYinUtils.toPinYin("盯盘高价"), "盯盘高价");
     }
 
 

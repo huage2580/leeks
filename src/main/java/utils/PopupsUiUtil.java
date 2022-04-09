@@ -1,18 +1,29 @@
 package utils;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
+
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+
 import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import form.StockWindow;
 
 /**
  * intellij ui 弹窗展示工具类 <br>
@@ -28,7 +39,7 @@ public class PopupsUiUtil {
     public static void showImageByFundCode(String fundCode, FundShowType type, Point showByPoint) throws MalformedURLException {
         //------试图解决个BUG，项目销毁的问题-------
         Project project = LogUtil.getProject();
-        if (project.isDisposed()){
+        if (project.isDisposed()) {
             return;
         }
         // 图片接口
@@ -144,6 +155,52 @@ public class PopupsUiUtil {
                 .createBalloon().show(RelativePoint.fromScreen(showByPoint), Balloon.Position.atRight);
     }
 
+    public static void showRemindPanel(String stockCode, StockShowType selectType, Point showByPoint) throws MalformedURLException {
+        JBPopupFactory instance = JBPopupFactory.getInstance();//创建JBPopupFactory实例
+        JLabel lowPriceLabel = new JLabel(RemindType.lowPrice.getDesc());
+        JLabel highPriceLabel = new JLabel(RemindType.highPrice.getDesc());
+        JTextField lowPriceArea = new JTextField(10);
+        JTextField highPriceArea = new JTextField(10);
+        lowPriceArea.setToolTipText("请输入整数或三位以内小数");
+        highPriceArea.setToolTipText("请输入整数或三位以内小数");
+        JButton button = new JButton("确定");
+        JPanel panel = new JPanel();
+        panel.setSize(80, 30);
+        panel.add(lowPriceLabel);
+        panel.add(lowPriceArea);
+        panel.add(highPriceLabel);
+        panel.add(highPriceArea);
+        panel.add(button);
+        // 添加监听事件
+        PropertiesComponent component = PropertiesComponent.getInstance();
+        button.addActionListener(d -> {
+
+            if (StringUtils.isNotBlank(lowPriceArea.getText()) && !Pattern.matches("[0-9]+(\\.[0-9]{1,3})?", lowPriceArea.getText())) {
+                lowPriceArea.requestFocus();
+                return;
+            }
+            if (StringUtils.isNotBlank(highPriceArea.getText()) && !Pattern.matches("[0-9]+(\\.[0-9]{1,3})?", highPriceArea.getText())) {
+                highPriceArea.requestFocus();
+                return;
+            }
+
+            if (StringUtils.isNotBlank(lowPriceArea.getText()) || StringUtils.isNotBlank(highPriceArea.getText())) {
+                String lowPrice = StringUtils.isBlank(lowPriceArea.getText()) ? "0" : lowPriceArea.getText();
+                String highPrice = StringUtils.isBlank(highPriceArea.getText()) ? "0" : highPriceArea.getText();
+                component.setValue(stockCode + "_remind", lowPrice + "_" + highPrice);
+                StockWindow.refresh();
+            }
+        });
+        instance.createComponentPopupBuilder(panel, lowPriceLabel)
+                .setTitle("盯盘提醒")
+                .setRequestFocus(true)
+                .setMovable(true)
+                .setResizable(true)
+                .setNormalWindowLevel(false)
+                .createPopup()
+                .show(RelativePoint.fromScreen(showByPoint));
+    }
+
     public enum FundShowType {
         /**
          * 净值估算图
@@ -176,12 +233,43 @@ public class PopupsUiUtil {
         /**
          * 月K线图
          */
-        monthly("monthly", "月K线图");
+        monthly("monthly", "月K线图"),
+        /**
+         * 盯盘提醒
+         */
+        remind("remind", "盯盘提醒");
 
         private String type;
         private String desc;
 
         StockShowType(String type, String desc) {
+            this.type = type;
+            this.desc = desc;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+
+    public enum RemindType {
+        /**
+         * 价格低于
+         */
+        lowPrice("lowPrice", "价格低于"),
+        /**
+         * 价格高于
+         */
+        highPrice("highPrice", "价格高于");
+
+        private String type;
+        private String desc;
+
+        RemindType(String type, String desc) {
             this.type = type;
             this.desc = desc;
         }

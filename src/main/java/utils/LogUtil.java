@@ -47,8 +47,8 @@ public class LogUtil {
     }
 
     public static void notify(String text,boolean success){
-        NotificationGroupManager.getInstance().getNotificationGroup("Leeks Notification Group")
-                .createNotification(text, success?NotificationType.INFORMATION:NotificationType.WARNING)
-                .notify(getProject());
+//        NotificationGroupManager.getInstance().getNotificationGroup("Leeks Notification Group")
+//                .createNotification(text, success?NotificationType.INFORMATION:NotificationType.WARNING)
+//                .notify(getProject());
     }
 }

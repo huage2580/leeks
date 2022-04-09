@@ -1,17 +1,22 @@
 package handler;
 
 import bean.StockBean;
+
 import org.apache.commons.lang.StringUtils;
+
 import utils.HttpClientPool;
 import utils.LogUtil;
 
 import javax.swing.*;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.intellij.ide.util.PropertiesComponent;
 
 public class TencentStockHandler extends StockRefreshHandler {
     private String urlPara;
@@ -85,6 +90,13 @@ public class TencentStockHandler extends StockRefreshHandler {
             bean.setTime(values[30]);
             bean.setMax(values[33]);//33
             bean.setMin(values[34]);//34
+
+            PropertiesComponent instance = PropertiesComponent.getInstance();
+            String remindPrice = instance.getValue(code + "_remind");
+            if (StringUtils.isNotBlank(remindPrice)) {
+                bean.setLowRemind(remindPrice.split("_")[0]);
+                bean.setHighRemind(remindPrice.split("_")[1]);
+            }
 
             BigDecimal now = new BigDecimal(values[3]);
             String costPriceStr = bean.getCostPrise();
