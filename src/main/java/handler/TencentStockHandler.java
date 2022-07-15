@@ -91,11 +91,15 @@ public class TencentStockHandler extends StockRefreshHandler {
             if (StringUtils.isNotEmpty(costPriceStr)) {
                 BigDecimal costPriceDec = new BigDecimal(costPriceStr);
                 BigDecimal incomeDiff = now.add(costPriceDec.negate());
-                BigDecimal incomePercentDec = incomeDiff.divide(costPriceDec, 5, RoundingMode.HALF_UP)
-                        .multiply(BigDecimal.TEN)
-                        .multiply(BigDecimal.TEN)
-                        .setScale(3, RoundingMode.HALF_UP);
-                bean.setIncomePercent(incomePercentDec.toString());
+                if (costPriceDec.compareTo(BigDecimal.ZERO) <= 0) {
+                    bean.setIncomePercent("0");
+                } else {
+                    BigDecimal incomePercentDec = incomeDiff.divide(costPriceDec, 5, RoundingMode.HALF_UP)
+                            .multiply(BigDecimal.TEN)
+                            .multiply(BigDecimal.TEN)
+                            .setScale(3, RoundingMode.HALF_UP);
+                    bean.setIncomePercent(incomePercentDec.toString());
+                }
 
                 String bondStr = bean.getBonds();
                 if (StringUtils.isNotEmpty(bondStr)) {
