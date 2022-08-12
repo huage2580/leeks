@@ -18,8 +18,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow anchor="left" id="leeks" factoryClass="FundWindow"/>
-        <applicationConfigurable id="leeks_settings" instance="SettingsWindow"/>
+        <toolWindow anchor="left" id="leeks" factoryClass="form.FundWindow"/>
+        <applicationConfigurable id="leeks_settings" instance="form.SettingsWindow"/>
         <notificationGroup id="Leeks Notification Group" displayType="BALLOON"/>
     </extensions>
 

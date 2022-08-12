@@ -1,13 +1,18 @@
 package handler;
 
 import bean.StockBean;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.intellij.ide.util.PropertiesComponent;
+
 import org.apache.commons.lang.StringUtils;
+
 import utils.HttpClientPool;
 import utils.LogUtil;
 
 import javax.swing.*;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -91,6 +96,13 @@ public class SinaStockHandler extends StockRefreshHandler {
             bean.setTime(Strings.repeat("0", 8) + split[31]);
             bean.setMax(split[4]);
             bean.setMin(split[5]);
+
+            PropertiesComponent instance = PropertiesComponent.getInstance();
+            String remindPrice = instance.getValue(code + "_remind");
+            if (StringUtils.isNotBlank(remindPrice)) {
+                bean.setLowRemind(remindPrice.split("_")[0]);
+                bean.setHighRemind(remindPrice.split("_")[1]);
+            }
 
             String costPriceStr = bean.getCostPrise();
             if (StringUtils.isNotEmpty(costPriceStr)) {

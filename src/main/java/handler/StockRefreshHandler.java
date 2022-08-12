@@ -1,11 +1,20 @@
 package handler;
 
 import bean.StockBean;
+
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+
+import utils.LogUtil;
 import utils.PinYinUtils;
 import utils.WindowUtils;
 
@@ -13,7 +22,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.*;
 
@@ -166,6 +177,28 @@ public abstract class StockRefreshHandler extends DefaultTableModel {
             updateRow(index, convertData);
         } else {
             addRow(convertData);
+        }
+
+        //盯盘提醒
+        PropertiesComponent instance = PropertiesComponent.getInstance();
+        String remindPrice = instance.getValue(bean.getCode() + "_remind");
+        if (StringUtils.isNotBlank(remindPrice) && StringUtils.isNotBlank(bean.getNow())) {
+            String lowPrice = remindPrice.split("_")[0];
+            String highPrice = remindPrice.split("_")[1];
+
+            BigDecimal nowValue = new BigDecimal(bean.getNow());
+            String remindText = "";
+            if (!StringUtils.equals("0", lowPrice) && new BigDecimal(lowPrice).compareTo(nowValue) > -1) {
+                remindText = "低价提醒！" + bean.getCode() + bean.getName() + "，现价：" + nowValue + "，低于盯盘价：" + lowPrice;
+                instance.setValue(bean.getCode() + "_remind", "0_" + highPrice);
+                LogUtil.info(remindText);
+                LogUtil.notify(remindText, true);
+            } else if (!StringUtils.equals("0", highPrice) && new BigDecimal(highPrice).compareTo(nowValue) < 1) {
+                remindText = "高价提醒！" + bean.getCode() + bean.getName() + "，现价：" + nowValue + "，高于盯盘价：" + highPrice;
+                instance.setValue(bean.getCode() + "_remind", lowPrice + "_0");
+                LogUtil.info(remindText);
+                LogUtil.notify(remindText, true);
+            }
         }
     }
 

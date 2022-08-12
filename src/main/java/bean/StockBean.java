@@ -1,12 +1,15 @@
 package bean;
 
 import org.apache.commons.lang3.StringUtils;
+
 import utils.PinYinUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
+
+import com.intellij.ide.util.PropertiesComponent;
 
 public class StockBean {
     private String code;
@@ -25,10 +28,15 @@ public class StockBean {
     private String min;
 
     private String costPrise;//成本价
-//    private String cost;//成本
+    //    private String cost;//成本
     private String bonds;//持仓
     private String incomePercent;//收益率
     private String income;//收益
+
+    //盯盘低价
+    private String lowRemind;
+    //盯盘高价
+    private String highRemind;
 
     public StockBean() {
     }
@@ -52,11 +60,18 @@ public class StockBean {
             this.code = code;
         }
         this.name = "--";
+
+        PropertiesComponent instance = PropertiesComponent.getInstance();
+        String remindPrice = instance.getValue(code + "_remind");
+        if (StringUtils.isNotBlank(remindPrice)) {
+            this.lowRemind = remindPrice.split("_")[0];
+            this.highRemind = remindPrice.split("_")[1];
+        }
     }
 
-    public StockBean(String code, Map<String, String[]> codeMap){
+    public StockBean(String code, Map<String, String[]> codeMap) {
         this.code = code;
-        if(codeMap.containsKey(code)){
+        if (codeMap.containsKey(code)) {
             String[] codeStr = codeMap.get(code);
             if (codeStr.length > 2) {
                 this.code = codeStr[0];
@@ -171,6 +186,22 @@ public class StockBean {
         this.income = income;
     }
 
+    public String getLowRemind() {
+        return lowRemind;
+    }
+
+    public void setLowRemind(String lowRemind) {
+        this.lowRemind = lowRemind;
+    }
+
+    public String getHighRemind() {
+        return highRemind;
+    }
+
+    public void setHighRemind(String highRemind) {
+        this.highRemind = highRemind;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -224,6 +255,10 @@ public class StockBean {
                 return this.getCostPrise() != null ? this.getIncomePercent() + "%" : this.getIncomePercent();
             case "收益":
                 return this.getIncome();
+            case "盯盘低价":
+                return "0".equals(this.getLowRemind()) ? null : this.getLowRemind();
+            case "盯盘高价":
+                return "0".equals(this.getHighRemind()) ? null : this.getHighRemind();
             case "更新时间":
                 String timeStr = "--";
                 if (this.getTime() != null) {
