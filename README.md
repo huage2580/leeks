@@ -101,6 +101,8 @@ bug fix from [DAIE](https://github.com/DA1Y1)
 修复成本价过低时收益金额不正确的问题；from [神驱一梦](https://github.com/BorrisWQBi)  
 - v2.0.1  
 支持自定义更新的时间段 from [dengerYang](https://github.com/dengerYang)  
+- v2.0.2  
+兼容成本为负的情况 from [bu6030](https://github.com/bu6030)
 
 
 
