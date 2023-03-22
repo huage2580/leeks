@@ -23,6 +23,7 @@ public class FundBean {
     private String costPrise;//持仓成本价
     private String bonds;//持有份额
     private String incomePercent;//收益率
+    private String todayIncome;//今日收益
     private String income;//收益
 
     public FundBean() {
@@ -138,6 +139,14 @@ public class FundBean {
         this.incomePercent = incomePercent;
     }
 
+    public String getTodayIncome() {
+        return todayIncome;
+    }
+
+    public void setTodayIncome(String todayIncome) {
+        this.todayIncome = todayIncome;
+    }
+
     public String getIncome() {
         return income;
     }
@@ -199,6 +208,8 @@ public class FundBean {
                 return this.getBonds();
             case "收益率":
                 return this.getCostPrise() != null ? this.getIncomePercent() + "%" : this.getIncomePercent();
+            case "今日收益":
+                return this.getTodayIncome();
             case "收益":
                 return this.getIncome();
             default:
