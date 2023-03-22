@@ -89,6 +89,13 @@ public class TianTianFundHandler extends FundRefreshHandler {
                                 BigDecimal incomeDec = incomeDiff.multiply(bondDec)
                                         .setScale(2, RoundingMode.HALF_UP);
                                 bean.setIncome(incomeDec.toString());
+
+                                // 计算当日收益
+                                String dwjzStr = bean.getDwjz();
+                                BigDecimal dwjz = new BigDecimal(dwjzStr);
+                                BigDecimal todayIncome = now.add(dwjz.negate()).multiply(bondDec)
+                                        .setScale(2, RoundingMode.HALF_UP);
+                                bean.setTodayIncome(todayIncome.toString());
                             }
                         }
 
