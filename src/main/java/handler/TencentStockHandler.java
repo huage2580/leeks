@@ -40,16 +40,13 @@ public class TencentStockHandler extends StockRefreshHandler {
         for (String str : code) {
             //兼容原有设置
             String[] strArray;
-            String targetCode;
             if (str.contains(",")) {
                 strArray = str.split(",");
             } else {
                 strArray = new String[]{str};
             }
-            targetCode = StockUtils.autoCompleteCode(strArray[0]);
-            strArray[0] = targetCode;
-            codeList.add(targetCode);
-            codeMap.put(targetCode, strArray);
+            codeList.add(strArray[0]);
+            codeMap.put(strArray[0], strArray);
         }
 
         urlPara = String.join(",", codeList);
