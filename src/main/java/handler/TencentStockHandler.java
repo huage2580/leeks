@@ -4,6 +4,7 @@ import bean.StockBean;
 import org.apache.commons.lang.StringUtils;
 import utils.HttpClientPool;
 import utils.LogUtil;
+import utils.StockUtils;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -39,13 +40,16 @@ public class TencentStockHandler extends StockRefreshHandler {
         for (String str : code) {
             //兼容原有设置
             String[] strArray;
+            String targetCode;
             if (str.contains(",")) {
                 strArray = str.split(",");
             } else {
                 strArray = new String[]{str};
             }
-            codeList.add(strArray[0]);
-            codeMap.put(strArray[0], strArray);
+            targetCode = StockUtils.autoCompleteCode(strArray[0]);
+            strArray[0] = targetCode;
+            codeList.add(targetCode);
+            codeMap.put(targetCode, strArray);
         }
 
         urlPara = String.join(",", codeList);
