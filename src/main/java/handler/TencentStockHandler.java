@@ -77,7 +77,7 @@ public class TencentStockHandler extends StockRefreshHandler {
             String code = line.substring(line.indexOf("_") + 1, line.indexOf("="));
             String dataStr = line.substring(line.indexOf("=") + 2, line.length() - 2);
             String[] values = dataStr.split("~");
-            StockBean bean = new StockBean(code, codeMap);
+            StockBean bean = new StockBean(code, codeMap.get(code));
             bean.setName(values[1]);
             bean.setNow(values[3]);
             bean.setChange(values[31]);

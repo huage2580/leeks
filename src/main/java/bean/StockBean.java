@@ -25,7 +25,7 @@ public class StockBean {
     private String min;
 
     private String costPrise;//成本价
-//    private String cost;//成本
+    //    private String cost;//成本
     private String bonds;//持仓
     private String incomePercent;//收益率
     private String income;//收益
@@ -54,17 +54,12 @@ public class StockBean {
         this.name = "--";
     }
 
-    public StockBean(String code, Map<String, String[]> codeMap){
+    public StockBean(String code, String[] codeStr) {
         this.code = code;
-        if(codeMap.containsKey(code)){
-            String[] codeStr = codeMap.get(code);
-            if (codeStr.length > 2) {
-                this.code = codeStr[0];
-                this.costPrise = codeStr[1];
-//                this.cost = codeStr[2];
-                this.bonds = codeStr[2];
-            }
-        }
+        if (codeStr == null || codeStr.length != 3) return;
+        this.code = codeStr[0];
+        this.costPrise = codeStr[1];
+        this.bonds = codeStr[2];
     }
 
     public String getCode() {
