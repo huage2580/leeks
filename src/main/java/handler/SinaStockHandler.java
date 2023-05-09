@@ -75,7 +75,7 @@ public class SinaStockHandler extends StockRefreshHandler {
             if (split.length < 32) {
                 continue;
             }
-            StockBean bean = new StockBean(code, codeMap);
+            StockBean bean = new StockBean(code, codeMap.get(code));
             bean.setName(split[0]);
             BigDecimal now = new BigDecimal(split[3]);
             BigDecimal yesterday = new BigDecimal(split[2]);
