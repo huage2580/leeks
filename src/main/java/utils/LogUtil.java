@@ -1,15 +1,16 @@
 package utils;
 
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.*;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class LogUtil {
     // 解决github中的bug #122，暂时没有其它方案监听到project的变化，先预存进行逻辑校验

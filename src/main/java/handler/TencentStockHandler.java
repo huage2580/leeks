@@ -4,7 +4,6 @@ import bean.StockBean;
 import org.apache.commons.lang.StringUtils;
 import utils.HttpClientPool;
 import utils.LogUtil;
-import utils.StockUtils;
 
 import javax.swing.*;
 import java.math.BigDecimal;

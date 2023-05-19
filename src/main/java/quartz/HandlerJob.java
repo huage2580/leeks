@@ -1,9 +1,5 @@
 package quartz;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import com.intellij.util.ExceptionUtil;
 import handler.CoinRefreshHandler;
 import handler.FundRefreshHandler;
@@ -13,6 +9,10 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import utils.LogUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 执行时钟任务，不想定义那么多类了，所以写了一个共用的，后面有特殊在各个单独处理。<br/>

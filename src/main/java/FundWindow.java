@@ -22,7 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import quartz.HandlerJob;
 import quartz.QuartzManager;
-import utils.*;
+import utils.HttpClientPool;
+import utils.LogUtil;
+import utils.PopupsUiUtil;
+import utils.WindowUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -31,8 +34,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
 
 public class FundWindow implements ToolWindowFactory {
     public static final String NAME = "Fund";

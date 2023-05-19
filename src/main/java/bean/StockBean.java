@@ -3,9 +3,6 @@ package bean;
 import org.apache.commons.lang3.StringUtils;
 import utils.PinYinUtils;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.Objects;
 
 public class StockBean {

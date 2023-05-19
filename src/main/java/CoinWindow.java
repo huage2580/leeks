@@ -6,7 +6,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import handler.CoinRefreshHandler;
-import handler.YahooCoinHandler;
+import handler.GeckoCoinHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.util.*;
+import java.util.HashMap;
 import java.util.List;
 
 public class CoinWindow {
@@ -61,7 +61,7 @@ public class CoinWindow {
     public CoinWindow() {
 
         //切换接口
-        handler = new YahooCoinHandler(table,refreshTimeLabel);
+        handler = new GeckoCoinHandler(table,refreshTimeLabel);
 
         AnActionButton refreshAction = new AnActionButton("停止刷新当前表格数据", AllIcons.Actions.Pause) {
             @Override
