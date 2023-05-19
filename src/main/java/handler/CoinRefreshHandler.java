@@ -1,11 +1,11 @@
 package handler;
 
+import bean.CoinBean;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import bean.CoinBean;
 import utils.PinYinUtils;
 import utils.WindowUtils;
 

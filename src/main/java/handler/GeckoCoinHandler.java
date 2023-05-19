@@ -1,24 +1,26 @@
 package handler;
 
 import bean.CoinBean;
-import bean.YahooResponse;
-import com.google.common.base.Joiner;
+import bean.GeckoResponse;
 import com.google.gson.Gson;
-import utils.HttpClientPool;
 import utils.LogUtil;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class YahooCoinHandler extends CoinRefreshHandler {
-    private final String URL = "https://query1.finance.yahoo.com/v7/finance/quote?&symbols=";
-    private final String KEYS = "&fields=regularMarketChange,regularMarketChangePercent,regularMarketPrice,regularMarketTime,regularMarketDayHigh,regularMarketDayLow";
+/**
+ * Data provided by CoinGecko
+ */
+public class GeckoCoinHandler extends CoinRefreshHandler {
+    private final String URL = "https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=usd";
     private final JLabel refreshTimeLabel;
 
     private final Gson gson = new Gson();
 
-    public YahooCoinHandler(JTable table, JLabel label) {
+    public GeckoCoinHandler(JTable table, JLabel label) {
         super(table);
         this.refreshTimeLabel = label;
     }
@@ -36,12 +38,15 @@ public class YahooCoinHandler extends CoinRefreshHandler {
         if (code.isEmpty()){
             return;
         }
-        String params = Joiner.on(",").join(code);
         try {
-            String res = HttpClientPool.getHttpClient().get(URL + params + KEYS);
-//            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));
-//            System.out.printf("%s,%s%n", time, res);
-            handleResponse(res);
+            List<String> refreshTimeList = new ArrayList<>();
+            for (String coin : code) {
+                CoinBean coinBean = CryptoPrice.getCoinData(coin);
+                updateData(coinBean);
+                refreshTimeList.add(coinBean.getValueByColumn("更新时间",false));
+            }
+            String text = refreshTimeList.stream().sorted().findFirst().orElse("");
+            SwingUtilities.invokeLater(() -> refreshTimeLabel.setText(text));
         } catch (Exception e) {
             LogUtil.info(e.getMessage());
         }
@@ -51,8 +56,14 @@ public class YahooCoinHandler extends CoinRefreshHandler {
 //        System.out.println("解析虚拟币："+response);
         List<String> refreshTimeList = new ArrayList<>();
         try{
-            YahooResponse yahooResponse = gson.fromJson(response, YahooResponse.class);
-            for (CoinBean coinBean : yahooResponse.getQuoteResponse().getResult()) {
+            HashMap<String, GeckoResponse> geckoResponse = gson.fromJson(response, HashMap.class);
+            List<CoinBean> coinBeanList = new ArrayList<>();
+            for (Map.Entry<String, GeckoResponse> stringGeckoResponseEntry : geckoResponse.entrySet()) {
+                CoinBean coinBean = new CoinBean(stringGeckoResponseEntry.getKey());
+                coinBean.setRegularMarketChange(stringGeckoResponseEntry.getValue().getUsd());
+                coinBeanList.add(coinBean);
+            }
+            for (CoinBean coinBean : coinBeanList) {
                 updateData(coinBean);
                 refreshTimeList.add(coinBean.getValueByColumn("更新时间",false));
             }
