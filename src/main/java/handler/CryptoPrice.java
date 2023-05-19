@@ -3,6 +3,8 @@ package handler;
 import bean.CoinBean;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.intellij.ide.util.PropertiesComponent;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,14 +24,34 @@ public class CryptoPrice {
     }
 
     public static CoinBean getCoinData(String coinId) throws Exception {
-
-        String proxyHost = "127.0.0.1";
-        int proxyPort = 1080;
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
         String url = "https://api.coingecko.com/api/v3/coins/" + coinId;
         URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection(proxy);
+        HttpURLConnection con;
 
+        String proxyStr = PropertiesComponent.getInstance().getValue("key_proxy");
+        if (StringUtils.isNotBlank(proxyStr)) {
+            String[] proxyHP = proxyStr.split(":");
+            Proxy.Type type;
+            String proxyHost;
+            if (proxyHP[0].startsWith("http")) {
+                type = Proxy.Type.HTTP;
+                proxyHost = proxyHP[1].substring("//".length());
+                int proxyPort = Integer.parseInt(proxyHP[2]);
+                Proxy proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));
+                con = (HttpURLConnection) obj.openConnection(proxy);
+            } else if (proxyHP[0].startsWith("socks")) {
+                type = Proxy.Type.SOCKS;
+                proxyHost = proxyHP[1].substring("//".length());
+                int proxyPort = Integer.parseInt(proxyHP[2]);
+                Proxy proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));
+                con = (HttpURLConnection) obj.openConnection(proxy);
+            } else {
+//                type = Proxy.Type.DIRECT;
+                con = (HttpURLConnection) obj.openConnection();
+            }
+        } else {
+            con = (HttpURLConnection) obj.openConnection();
+        }
         // 设置请求头
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
